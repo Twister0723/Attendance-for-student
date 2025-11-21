@@ -1,0 +1,515 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+}
+
+body {
+    background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Subtle background pattern */
+body::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        radial-gradient(circle at 20% 80%, rgba(76, 175, 80, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(46, 125, 50, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+/* School Logo Styles */
+.school-logo {
+    position: absolute;
+    top: 25px;
+    left: 30px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    z-index: 100;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    padding: 12px 20px;
+    border-radius: 16px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(76, 175, 80, 0.2);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.school-logo:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+    background: rgba(255, 255, 255, 0.95);
+    border-color: rgba(76, 175, 80, 0.4);
+}
+
+.logo-img {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+    transition: transform 0.3s ease;
+}
+
+.school-logo:hover .logo-img {
+    transform: scale(1.05) rotate(2deg);
+}
+
+.logo-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.logo-text h2 {
+    margin: 0;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #1B5E20;
+    background: linear-gradient(135deg, #1B5E20, #4CAF50);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.2;
+}
+
+.logo-text p {
+    margin: 0;
+    font-size: 0.8rem;
+    color: #66BB6A;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+}
+
+.container {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    width: 100%;
+    max-width: 450px;
+    padding: 2.5rem 2rem;
+    border-radius: 20px;
+    box-shadow: 
+        0 20px 40px rgba(0, 0, 0, 0.1),
+        0 0 0 1px rgba(255, 255, 255, 0.2);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    z-index: 1;
+}
+
+.container:hover {
+    transform: translateY(-8px) scale(1.01);
+    box-shadow: 
+        0 30px 60px rgba(0, 0, 0, 0.15),
+        0 0 0 1px rgba(255, 255, 255, 0.3);
+}
+
+.container::before {
+    content: "";
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(135deg, #4CAF50, #81C784, #A5D6A7);
+    border-radius: 22px;
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.container:hover::before {
+    opacity: 1;
+}
+
+.form-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: #1B5E20;
+    position: relative;
+    padding-bottom: 0.5rem;
+}
+
+.form-title::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, #4CAF50, #81C784);
+    border-radius: 2px;
+}
+
+.input-group {
+    position: relative;
+    background: linear-gradient(135deg, #f8fff8, #f1f8e9);
+    margin: 1.5em 0;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    padding: 0.9em 1.2em;
+    border: 2px solid #E8F5E8;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 8px rgba(76, 175, 80, 0.08);
+}
+
+.input-group:hover {
+    border-color: #C8E6C9;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.12);
+}
+
+.input-group:focus-within {
+    border-color: #4CAF50;
+    background: #ffffff;
+    box-shadow: 0 4px 16px rgba(76, 175, 80, 0.2);
+    transform: translateY(-2px);
+}
+
+.input-group i {
+    color: #66BB6A;
+    margin-right: 12px;
+    font-size: 1.1em;
+    transition: all 0.3s ease;
+    min-width: 20px;
+    text-align: center;
+}
+
+.input-group:focus-within i {
+    color: #2E7D32;
+    transform: scale(1.1);
+}
+
+select, input {
+    flex: 1;
+    color: #1B5E20;
+    background-color: transparent;
+    border: none;
+    font-size: 15px;
+    font-weight: 500;
+    padding: 0.2em 0;
+    outline: none;
+    font-family: inherit;
+}
+
+select::placeholder, input::placeholder {
+    color: #81C784;
+    font-weight: 400;
+}
+
+select {
+    cursor: pointer;
+    background: transparent;
+}
+
+.input-group.password {
+    padding-right: 0.8em;
+}
+
+#eye {
+    cursor: pointer;
+    color: #81C784;
+    transition: all 0.3s ease;
+    margin-left: auto;
+    margin-right: 0;
+    padding: 0.3em;
+    border-radius: 50%;
+}
+
+#eye:hover {
+    color: #4CAF50;
+    background: rgba(76, 175, 80, 0.1);
+    transform: scale(1.1);
+}
+
+.error {
+    color: #D32F2F;
+    font-size: 0.8rem;
+    margin-top: 0.5em;
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    font-weight: 500;
+    padding: 0.5em 1em;
+    background: rgba(211, 47, 47, 0.05);
+    border-radius: 8px;
+    border-left: 3px solid #D32F2F;
+}
+
+.error::before {
+    content: "⚠";
+    font-size: 0.8em;
+    color: #D32F2F;
+}
+
+.error-main {
+    background: linear-gradient(135deg, #FF5252, #D32F2F);
+    padding: 1.2em 1.5em;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+    animation: slideDown 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 4px 12px rgba(211, 47, 47, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.error-main p {
+    color: white;
+    text-align: center;
+    margin: 0;
+    font-weight: 600;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-15px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.recover {
+    text-align: right;
+    margin: 1.2em 0 1.8em;
+}
+
+.recover a {
+    text-decoration: none;
+    color: #388E3C;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    padding: 0.5em 1em;
+    border-radius: 8px;
+}
+
+.recover a:hover {
+    color: #1B5E20;
+    background: rgba(76, 175, 80, 0.1);
+    text-decoration: none;
+}
+
+.btn {
+    font-size: 1.1rem;
+    padding: 1em 0;
+    border-radius: 14px;
+    border: none;
+    width: 100%;
+    background: linear-gradient(135deg, #4CAF50, #388E3C);
+    color: white;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    font-weight: 700;
+    margin-top: 0.8em;
+    position: relative;
+    overflow: hidden;
+    letter-spacing: 0.5px;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 8px 20px rgba(76, 175, 80, 0.3);
+}
+
+.btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 25px rgba(76, 175, 80, 0.4);
+    background: linear-gradient(135deg, #388E3C, #2E7D32);
+}
+
+.btn:active {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 15px rgba(76, 175, 80, 0.4);
+}
+
+.btn::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.6s ease;
+}
+
+.btn:hover::before {
+    left: 100%;
+}
+
+.or {
+    font-size: 0.85rem;
+    margin: 2.2rem 0 1.8rem;
+    text-align: center;
+    color: #81C784;
+    font-weight: 600;
+    position: relative;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.or::before,
+.or::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 35%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #C8E6C9, transparent);
+}
+
+.or::before {
+    left: 0;
+}
+
+.or::after {
+    right: 0;
+}
+
+.icons {
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    gap: 1.2rem;
+}
+
+.icons i {
+    color: #4CAF50;
+    padding: 0.9rem;
+    border-radius: 50%;
+    font-size: 1.3rem;
+    cursor: pointer;
+    border: 2px solid #E8F5E8;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    width: 55px;
+    height: 55px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+}
+
+.icons i:hover {
+    background: linear-gradient(135deg, #4CAF50, #388E3C);
+    color: white;
+    border-color: #4CAF50;
+    transform: translateY(-3px) scale(1.1);
+    box-shadow: 0 8px 20px rgba(76, 175, 80, 0.3);
+}
+
+/* Loading state */
+.btn.loading {
+    pointer-events: none;
+    opacity: 0.9;
+    transform: translateY(0);
+}
+
+.btn.loading::after {
+    content: "";
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    top: 50%;
+    left: 50%;
+    margin-left: -11px;
+    margin-top: -11px;
+    border: 2px solid rgba(255, 255, 255, 0.6);
+    border-radius: 50%;
+    border-top-color: #ffffff;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Floating animation for container */
+@keyframes float {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-10px) scale(1.02); }
+}
+
+.container {
+    animation: float 6s ease-in-out infinite;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+    .school-logo {
+        top: 15px;
+        left: 15px;
+        padding: 10px 15px;
+        gap: 12px;
+    }
+    
+    .logo-img {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .logo-text h2 {
+        font-size: 1.1rem;
+    }
+    
+    .logo-text p {
+        font-size: 0.75rem;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .school-logo {
+        position: relative;
+        top: 0;
+        left: 0;
+        margin: 0 auto 2rem auto;
+        width: fit-content;
+        max-width: 90%;
+    }
+    
+    body {
+        padding-top: 20px;
+    }
+    
+    .container {
+        margin: 20px auto;
+        padding: 2rem 1.5rem;
+        animation: none;
+    }
+    
+    .container:hover {
+        transform: none;
+    }
+    
+    body {
+        padding: 15px;
+        background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
+    }
+    
+    .form-title {
+        font-size: 1.6rem;
+    }
+    
+    .input-group {
+        padding: 0.8em 1em;
+    }
+    
+    .btn {
+        padding: 0.9em 0;
+    }
+}
