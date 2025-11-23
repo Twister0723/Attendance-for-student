@@ -3,6 +3,18 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+// Include your database connection
+$host = "localhost";
+$database = "attendance-db";
+$user = "root";
+$password = "";
+try {
+    $pdo = new PDO("mysql:host=$host;dbname=$database", $user, $password);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $e) {
+    die("Connection failed: " . $e->getMessage());
+}
+
 // Handle user login logics
 $errors = [];
 
@@ -25,49 +37,83 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
         $errors['password'] = 'Please enter your password';
     }
 
-    if (!$agreeToPolicy) {
-        $errors['policy'] = 'You must agree to the Privacy Policy to continue';
-    }
-
     // Only proceed if no validation errors
     if (empty($errors)) {
-        if ($userType == "administrator") {
-            $stmt = $pdo->prepare("SELECT * FROM tbladmin WHERE emailAddress = :email");
-        } elseif ($userType == "lecture") {
-            $stmt = $pdo->prepare("SELECT * FROM tbllecture WHERE emailAddress = :email");
-        }
-        
-        $stmt->execute(['email' => $email]);
-        $user = $stmt->fetch();
-
-        if ($user && password_verify($password, $user['password'])) {
-            $_SESSION['user'] = [
-                'id' => $user['Id'],
-                'email' => $user['emailAddress'],
-                'name' => $user['firstName'],
-                'role' => $userType,
-            ];
-
-            // Clear any previous errors
-            unset($_SESSION['errors']);
+        try {
+            $table = ($userType == "administrator") ? "tbladmin" : "tbllecture";
             
-            header('Location: home');
-            exit();
-        } else {
-            $errors['login'] = 'Invalid email or password';
+            // Fetch user
+            $stmt = $pdo->prepare("SELECT * FROM $table WHERE emailAddress = :email LIMIT 1");
+            $stmt->execute(['email' => $email]);
+            $user = $stmt->fetch();
+
+            if ($user && password_verify($password, $user['password'])) {
+                // Check if user has already accepted privacy policy
+                $privacyAccepted = $user['privacy_policy_accepted'] ?? 0;
+
+                // ==== FIXED LOGIC ====
+                // If user hasn't agreed AND this is the FIRST click (no policy checkbox shown yet)
+                if (!$privacyAccepted && !isset($_POST['agree_to_policy'])) {
+                    // Store that we need to show policy agreement on page reload
+                    $_SESSION['needs_policy_agreement'] = true;
+                    $_SESSION['valid_user_data'] = [
+                        'email' => $email,
+                        'user_type' => $userType,
+                        'password' => $password
+                    ];
+                    
+                    // Page will reload and show privacy checkbox
+                } 
+                // If user hasn't agreed AND this is the SECOND click (policy checkbox shown and checked)
+                else if (!$privacyAccepted && $agreeToPolicy) {
+                    // Update policy acceptance and log in
+                    $updateStmt = $pdo->prepare("UPDATE $table SET privacy_policy_accepted = 1, policy_accepted_at = NOW() WHERE Id = :id");
+                    $updateStmt->execute(['id' => $user['Id']]);
+                    $privacyAccepted = 1;
+                }
+                // If user has already accepted policy (either now or previously)
+                if ($privacyAccepted) {
+                    $_SESSION['user'] = [
+                        'id' => $user['Id'],
+                        'email' => $user['emailAddress'],
+                        'name' => $user['firstName'],
+                        'role' => $userType,
+                    ];
+
+                    // Clear session data
+                    unset($_SESSION['errors']);
+                    unset($_SESSION['old']);
+                    unset($_SESSION['needs_policy_agreement']);
+                    unset($_SESSION['valid_user_data']);
+                    
+                    header('Location: home');
+                    exit();
+                }
+            } else {
+                $errors['login'] = 'Invalid email or password';
+            }
+        } catch (PDOException $e) {
+            $errors['login'] = 'Database error: ' . $e->getMessage();
         }
     }
 
     // Store errors in session if any exist
     if (!empty($errors)) {
         $_SESSION['errors'] = $errors;
-        // Keep form values for better UX
         $_SESSION['old'] = [
             'email' => $email,
             'user_type' => $userType,
             'agree_to_policy' => $agreeToPolicy
         ];
     }
+}
+
+// Clear any existing session data when loading the login page fresh
+if (empty($_POST)) {
+    unset($_SESSION['errors']);
+    unset($_SESSION['old']);
+    unset($_SESSION['needs_policy_agreement']);
+    unset($_SESSION['valid_user_data']);
 }
 
 // Retrieve errors from session
@@ -95,9 +141,16 @@ function get_old_value($field, $default = '') {
     return isset($old[$field]) ? htmlspecialchars($old[$field]) : $default;
 }
 
-function get_old_checkbox($field) {
-    global $old;
-    return isset($old[$field]) && $old[$field] ? 'checked' : '';
+// Determine if we should show policy agreement
+$showPolicyAgreement = false;
+$typedEmail = $old['email'] ?? '';
+$typedRole = $old['user_type'] ?? '';
+
+// Show policy agreement when we have valid user data that needs policy agreement
+if (isset($_SESSION['needs_policy_agreement']) && $_SESSION['needs_policy_agreement'] && isset($_SESSION['valid_user_data'])) {
+    $showPolicyAgreement = true;
+    $typedEmail = $_SESSION['valid_user_data']['email'];
+    $typedRole = $_SESSION['valid_user_data']['user_type'];
 }
 ?>
 
@@ -110,7 +163,28 @@ function get_old_checkbox($field) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="resources/assets/css/login_styles.css">
     <style>
-        /* Privacy Policy Modal Styles */
+        .policy-agreement {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin: 1.5rem 0;
+            padding: 1rem;
+            background: #f8fafc;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+        }
+        .policy-required-message {
+            background: #fef3c7;
+            border: 1px solid #f59e0b;
+            border-radius: 12px;
+            padding: 1rem;
+            margin: 1rem 0;
+            text-align: center;
+        }
+        .readonly-field {
+            background-color: #f8fafc !important;
+            color: #64748b !important;
+        }
         .policy-modal {
             display: none;
             position: fixed;
@@ -124,7 +198,6 @@ function get_old_checkbox($field) {
             justify-content: center;
             padding: 20px;
         }
-
         .policy-content {
             background: white;
             border-radius: 20px;
@@ -136,57 +209,55 @@ function get_old_checkbox($field) {
             position: relative;
             overflow: hidden;
         }
-
         .policy-header {
             background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%);
             color: white;
             padding: 1.5rem 2rem;
             border-radius: 20px 20px 0 0;
             text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 10;
         }
-
-        .policy-header h2 {
-            margin: 0;
-            font-size: 1.5rem;
-            font-weight: 600;
-        }
-
         .policy-body {
             padding: 2rem;
-            max-height: 50vh;
+            max-height: 60vh;
             overflow-y: auto;
             line-height: 1.6;
             color: #1e293b;
         }
-
         .policy-body h3 {
             color: #7c3aed;
             margin-top: 1.5rem;
             margin-bottom: 0.5rem;
             font-size: 1.1rem;
         }
-
+        .policy-body h4 {
+            color: #475569;
+            margin: 1rem 0 0.5rem 0;
+            font-size: 1rem;
+        }
         .policy-body p {
             margin-bottom: 1rem;
+            font-size: 0.95rem;
         }
-
         .policy-body ul {
             margin-bottom: 1rem;
             padding-left: 1.5rem;
         }
-
         .policy-body li {
             margin-bottom: 0.5rem;
+            font-size: 0.9rem;
         }
-
         .policy-footer {
             padding: 1.5rem 2rem;
             border-top: 1px solid #e2e8f0;
             text-align: center;
             background: #f8fafc;
             border-radius: 0 0 20px 20px;
+            position: sticky;
+            bottom: 0;
         }
-
         .close-policy {
             position: absolute;
             top: 1rem;
@@ -204,56 +275,10 @@ function get_old_checkbox($field) {
             font-size: 1.2rem;
             transition: all 0.3s ease;
         }
-
         .close-policy:hover {
             background: rgba(255, 255, 255, 0.3);
             transform: scale(1.1);
         }
-
-        .policy-agreement {
-            display: flex;
-            align-items: flex-start;
-            gap: 12px;
-            margin: 1.5rem 0;
-            padding: 1rem;
-            background: #f8fafc;
-            border-radius: 12px;
-            border: 1px solid #e2e8f0;
-            transition: all 0.3s ease;
-        }
-
-        .policy-agreement.checked {
-            border-color: #7c3aed;
-            background: rgba(124, 58, 237, 0.05);
-        }
-
-        .policy-agreement input[type="checkbox"] {
-            margin-top: 2px;
-            transform: scale(1.2);
-            cursor: pointer;
-        }
-
-        .policy-agreement label {
-            font-size: 0.9rem;
-            line-height: 1.4;
-            color: #475569;
-            cursor: pointer;
-            user-select: none;
-        }
-
-        .policy-link {
-            color: #7c3aed;
-            text-decoration: none;
-            font-weight: 600;
-            cursor: pointer;
-            transition: color 0.3s ease;
-        }
-
-        .policy-link:hover {
-            color: #5b21b6;
-            text-decoration: underline;
-        }
-
         .btn-policy {
             background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%);
             color: white;
@@ -271,51 +296,27 @@ function get_old_checkbox($field) {
             width: 100%;
             box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
         }
-
         .btn-policy:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(124, 58, 237, 0.4);
         }
-
-        .btn-policy:disabled {
-            background: #9ca3af;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
+        .policy-link {
+            color: #7c3aed;
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: color 0.3s ease;
         }
-
-        /* Enhanced error styling for policy */
-        .error-policy {
-            color: #e11d48;
-            font-size: 0.85rem;
-            margin-top: 0.5rem;
-            padding: 0.5rem;
-            background: rgba(225, 29, 72, 0.1);
+        .policy-link:hover {
+            color: #5b21b6;
+            text-decoration: underline;
+        }
+        .highlight {
+            background: #f0f9ff;
+            padding: 1rem;
             border-radius: 8px;
-            border: 1px solid rgba(225, 29, 72, 0.2);
-        }
-
-        /* Loading state for login button */
-        .btn.loading {
-            position: relative;
-            pointer-events: none;
-        }
-
-        .btn.loading::after {
-            content: '';
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            border: 2px solid transparent;
-            border-top: 2px solid white;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            right: 20px;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            border-left: 4px solid #0ea5e9;
+            margin: 1rem 0;
         }
     </style>
 </head>
@@ -334,135 +335,180 @@ function get_old_checkbox($field) {
         
         <?php display_error('login', true); ?>
         
+        <!-- Show message when policy agreement is required -->
+        <?php if ($showPolicyAgreement): ?>
+        <div class="policy-required-message">
+            <p><i class="fas fa-exclamation-circle"></i> Please agree to the Privacy Policy to complete your login</p>
+        </div>
+        <?php endif; ?>
+        
         <form method="POST" action="" id="loginForm">
             <div class="input-group">
                 <i class="fas fa-user-tag"></i>
-                <select name="user_type" id="user_type" required>
+                <select name="user_type" required <?= $showPolicyAgreement ? 'disabled' : '' ?> autocomplete="user-type">
                     <option value="">Select User Type</option>
-                    <option value="lecture" <?= get_old_value('user_type') === 'lecture' ? 'selected' : '' ?>>Lecture</option>
-                    <option value="administrator" <?= get_old_value('user_type') === 'administrator' ? 'selected' : '' ?>>Administrator</option>
+                    <option value="lecture" <?= $typedRole === 'lecture' ? 'selected' : '' ?>>Lecture</option>
+                    <option value="administrator" <?= $typedRole === 'administrator' ? 'selected' : '' ?>>Administrator</option>
                 </select>
                 <?php display_error('user_type'); ?>
             </div>
             
             <div class="input-group">
                 <i class="fas fa-envelope"></i>
-                <input type="email" name="email" id="email" placeholder="Email Address" required 
-                       value="<?= get_old_value('email') ?>">
+                <input type="email" name="email" placeholder="Email Address" required 
+                       value="<?= htmlspecialchars($typedEmail) ?>" 
+                       <?= $showPolicyAgreement ? 'readonly class="readonly-field"' : '' ?>
+                       autocomplete="email">
                 <?php display_error('email'); ?>
             </div>
             
             <div class="input-group password">
                 <i class="fas fa-lock"></i>
-                <input type="password" name="password" id="password" placeholder="Password" required>
-                <i id="eye" class="fas fa-eye" title="Show Password"></i>
+                <input type="password" name="password" placeholder="Password" required 
+                       <?= $showPolicyAgreement ? 'readonly class="readonly-field"' : '' ?>
+                       autocomplete="current-password">
                 <?php display_error('password'); ?>
             </div>
             
-            <!-- Privacy Policy Agreement -->
-            <div class="policy-agreement" id="policyAgreement">
-                <input type="checkbox" name="agree_to_policy" id="agree_to_policy" <?= get_old_checkbox('agree_to_policy') ?>>
+            <?php if ($showPolicyAgreement): ?>
+            <div class="policy-agreement">
+                <input type="checkbox" name="agree_to_policy" id="agree_to_policy" autocomplete="off">
                 <label for="agree_to_policy">
                     I have read and agree to the 
                     <span class="policy-link" onclick="openPolicyModal()">Privacy Policy</span>
                     and terms of service
                 </label>
+                
+                <!-- Hidden fields to preserve data -->
+                <input type="hidden" name="user_type" value="<?= htmlspecialchars($typedRole) ?>">
+                <input type="hidden" name="email" value="<?= htmlspecialchars($typedEmail) ?>">
+                <input type="hidden" name="password" value="<?= htmlspecialchars($_SESSION['valid_user_data']['password'] ?? '') ?>">
             </div>
-            <?php 
-            if (isset($errors['policy'])) {
-                echo '<div class="error-policy">' . htmlspecialchars($errors['policy']) . '</div>';
-            }
-            ?>
+            <?php endif; ?>
             
-            <p class="recover">
-                <a href="#">Forgot Password?</a>
-            </p>
-            
-            <button type="submit" class="btn" name="login" id="loginBtn">
-                Sign In
+            <button type="submit" class="btn" name="login">
+                <?= $showPolicyAgreement ? 'Complete Login' : 'Sign In' ?>
             </button>
         </form>
-        
-        <p class="or">
-            ---------- or ---------
-        </p>
-        
-        <div class="icons">
-            <i class="fab fa-google"></i>
-            <i class="fab fa-facebook"></i>
-        </div>
     </div>
 
-    <!-- Privacy Policy Modal -->
+    <!-- Enhanced Privacy Policy Modal -->
     <div class="policy-modal" id="policyModal">
         <div class="policy-content">
             <div class="policy-header">
-                <h2>Privacy Policy</h2>
+                <h2><i class="fas fa-shield-alt"></i> Privacy Policy & Data Protection</h2>
                 <button class="close-policy" onclick="closePolicyModal()">&times;</button>
             </div>
             <div class="policy-body">
-                <h3>1. Information We Collect</h3>
-                <p>Our Attendance Management System collects the following information:</p>
-                
+                <div class="highlight">
+                    <p><strong>📋 Overview:</strong> This Attendance Management System uses facial recognition technology to track attendance. By agreeing, you consent to the collection and processing of your biometric data for academic purposes.</p>
+                </div>
+
+                <h3>1. Data We Collect</h3>
                 <h4>Personal Information</h4>
                 <ul>
-                    <li><strong>Student/Lecturer Data:</strong> Name, email address, registration number, faculty, course information</li>
-                    <li><strong>Facial Recognition Data:</strong> Captured images for attendance tracking</li>
-                    <li><strong>Academic Information:</strong> Course enrollment, class schedules, attendance records</li>
-                </ul>
-                
-                <h4>Automatically Collected Information</h4>
-                <ul>
-                    <li><strong>Usage Data:</strong> Login times, system interactions, feature usage</li>
-                    <li><strong>Technical Data:</strong> IP address, browser type, device information</li>
-                    <li><strong>Attendance Records:</strong> Timestamped attendance data with location context</li>
+                    <li><strong>Identity Data:</strong> Name, student/lecturer ID, email address</li>
+                    <li><strong>Academic Data:</strong> Course enrollment, class schedules, faculty information</li>
+                    <li><strong>Biometric Data:</strong> Facial images and facial recognition data</li>
+                    <li><strong>Attendance Records:</strong> Timestamped attendance with location context</li>
                 </ul>
 
-                <h3>2. How We Use Your Information</h3>
-                <p>We use the collected information for the following purposes:</p>
+                <h4>Technical Information</h4>
                 <ul>
-                    <li><strong>Attendance Tracking:</strong> To accurately record and monitor student attendance</li>
-                    <li><strong>Academic Management:</strong> To generate reports for faculty and administration</li>
-                    <li><strong>System Improvement:</strong> To enhance facial recognition accuracy and system performance</li>
-                    <li><strong>Communication:</strong> To send attendance notifications and system updates</li>
-                    <li><strong>Security:</strong> To prevent unauthorized access and ensure system integrity</li>
+                    <li><strong>System Usage:</strong> Login times, feature usage, session duration</li>
+                    <li><strong>Device Data:</strong> IP address, browser type, operating system</li>
+                    <li><strong>Performance Data:</strong> System interactions and response times</li>
                 </ul>
 
-                <h3>3. Data Storage and Security</h3>
-                <h4>Storage</h4>
+                <h3>2. How We Use Your Data</h3>
+                <h4>Primary Purposes</h4>
                 <ul>
-                    <li>Facial images are stored securely on our servers with encryption</li>
-                    <li>Personal data is retained only as long as necessary for academic purposes</li>
-                    <li>Attendance records are maintained according to institutional retention policies</li>
+                    <li><strong>Attendance Tracking:</strong> Automated attendance recording using facial recognition</li>
+                    <li><strong>Academic Management:</strong> Generating attendance reports for faculty and administration</li>
+                    <li><strong>System Security:</strong> Preventing unauthorized access and ensuring data integrity</li>
+                    <li><strong>Academic Compliance:</strong> Meeting institutional attendance requirements</li>
                 </ul>
-                
+
+                <h4>Secondary Purposes</h4>
+                <ul>
+                    <li><strong>System Improvement:</strong> Enhancing facial recognition accuracy</li>
+                    <li><strong>User Support:</strong> Troubleshooting and technical assistance</li>
+                    <li><strong>Communication:</strong> Sending attendance notifications and system updates</li>
+                </ul>
+
+                <h3>3. Data Storage & Security</h3>
+                <h4>Storage Duration</h4>
+                <ul>
+                    <li><strong>Facial Data:</strong> Encrypted and stored for active academic periods only</li>
+                    <li><strong>Attendance Records:</strong> Maintained according to institutional retention policies</li>
+                    <li><strong>Personal Information:</strong> Retained while you are an active student/lecturer</li>
+                </ul>
+
                 <h4>Security Measures</h4>
                 <ul>
-                    <li>Encryption of sensitive data in transit and at rest</li>
-                    <li>Regular security audits and vulnerability assessments</li>
-                    <li>Access controls and authentication mechanisms</li>
-                    <li>Secure deletion of data when no longer needed</li>
+                    <li><strong>Encryption:</strong> All sensitive data encrypted in transit and at rest</li>
+                    <li><strong>Access Controls:</strong> Role-based access to prevent unauthorized viewing</li>
+                    <li><strong>Regular Audits:</strong> Security assessments and vulnerability testing</li>
+                    <li><strong>Data Minimization:</strong> Collecting only necessary information</li>
                 </ul>
 
-                <h3>4. Your Rights and Choices</h3>
-                <p>You have the following rights regarding your data:</p>
+                <h3>4. Your Rights & Choices</h3>
+                <h4>Data Subject Rights</h4>
                 <ul>
                     <li><strong>Access:</strong> Request a copy of your personal data</li>
-                    <li><strong>Correction:</strong> Update or correct inaccurate information</li>
-                    <li><strong>Deletion:</strong> Request deletion of your data (subject to academic requirements)</li>
-                    <li><strong>Opt-out:</strong> Opt out of non-essential communications</li>
-                    <li><strong>Complaint:</strong> File a complaint with relevant authorities</li>
+                    <li><strong>Correction:</strong> Update inaccurate or incomplete information</li>
+                    <li><strong>Deletion:</strong> Request data deletion (subject to academic requirements)</li>
+                    <li><strong>Objection:</strong> Object to specific data processing activities</li>
+                    <li><strong>Portability:</strong> Request data transfer where technically feasible</li>
                 </ul>
 
-                <h3>5. Contact Information</h3>
-                <p>If you have any questions about this Privacy Policy, please contact:</p>
-                <p><strong>Data Protection Officer</strong><br>
-                Email: dpo@yourinstitution.edu<br>
-                Phone: (555) 123-4567</p>
+                <h4>Consent Management</h4>
+                <ul>
+                    <li>You may withdraw consent, but this may affect system access</li>
+                    <li>Withdrawal does not affect lawful processing before withdrawal</li>
+                    <li>Alternative attendance methods may be available upon request</li>
+                </ul>
+
+                <h3>5. Data Sharing & Disclosure</h3>
+                <h4>Internal Sharing</h4>
+                <ul>
+                    <li><strong>Faculty:</strong> Course instructors and academic supervisors</li>
+                    <li><strong>Administration:</strong> Authorized administrative staff</li>
+                    <li><strong>IT Department:</strong> System maintenance and support personnel</li>
+                </ul>
+
+                <h4>External Sharing</h4>
+                <ul>
+                    <li><strong>No Commercial Sharing:</strong> We do not sell or rent your data</li>
+                    <li><strong>Legal Requirements:</strong> Disclosure only when legally required</li>
+                    <li><strong>Service Providers:</strong> Trusted partners with strict data protection agreements</li>
+                </ul>
+
+                <h3>6. Biometric Data Specifics</h3>
+                <h4>Facial Recognition Processing</h4>
+                <ul>
+                    <li>Facial images are converted to mathematical templates (not stored as photos)</li>
+                    <li>Templates are encrypted and cannot be reverse-engineered to recreate images</li>
+                    <li>Real-time processing with immediate template deletion after verification</li>
+                    <li>Optional manual attendance available for those uncomfortable with facial recognition</li>
+                </ul>
+
+                <h3>7. Contact Information</h3>
+                <p>For privacy concerns, data requests, or technical support:</p>
+                <p>
+                    <strong>Data Protection Officer</strong><br>
+                    📧 Email: dpo@eclaroacademy.edu.ph<br>
+                    📞 Phone: (02) 8XXX-XXXX<br>
+                    🏢 Address: Eclaro Academy, [Your Campus Address]
+                </p>
+
+                <div class="highlight">
+                    <p><strong>⚠️ Important:</strong> By agreeing to this policy, you acknowledge that you have read and understood how your data will be processed for attendance management purposes.</p>
+                </div>
             </div>
             <div class="policy-footer">
                 <button type="button" class="btn-policy" onclick="acceptPolicy()">
-                    <i class="fas fa-check"></i>
+                    <i class="fas fa-check-circle"></i>
                     I Understand and Accept
                 </button>
             </div>
@@ -470,93 +516,19 @@ function get_old_checkbox($field) {
     </div>
 
     <script>
-        // Password visibility toggle
-        document.getElementById('eye').addEventListener('click', function() {
-            const passwordInput = document.getElementById('password');
-            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-            passwordInput.setAttribute('type', type);
-            this.classList.toggle('fa-eye');
-            this.classList.toggle('fa-eye-slash');
-        });
-
-        // Form submission handling
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            const btn = document.getElementById('loginBtn');
+        document.getElementById('loginForm')?.addEventListener('submit', function(e) {
             const policyCheckbox = document.getElementById('agree_to_policy');
-            
-            // Check if policy is agreed
-            if (!policyCheckbox.checked) {
+            if (policyCheckbox && !policyCheckbox.checked) {
                 e.preventDefault();
-                // Show error and scroll to policy section
-                policyCheckbox.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                // Add visual feedback
-                document.getElementById('policyAgreement').style.borderColor = '#e11d48';
-                document.getElementById('policyAgreement').style.background = 'rgba(225, 29, 72, 0.05)';
-                
-                // Remove feedback after 2 seconds
-                setTimeout(() => {
-                    document.getElementById('policyAgreement').style.borderColor = '#e2e8f0';
-                    document.getElementById('policyAgreement').style.background = '#f8fafc';
-                }, 2000);
-                
-                // Reset button state immediately
-                resetLoginButton();
-                return;
-            }
-
-            // Only show loading if form is valid
-            btn.classList.add('loading');
-            btn.innerHTML = 'Signing In...';
-            
-            // Add a timeout to reset button in case form submission fails
-            setTimeout(() => {
-                resetLoginButton();
-            }, 5000); // Reset after 5 seconds if still loading
-        });
-
-        // Function to reset login button
-        function resetLoginButton() {
-            const btn = document.getElementById('loginBtn');
-            btn.classList.remove('loading');
-            btn.innerHTML = 'Sign In';
-        }
-
-        // Update policy agreement style when checkbox changes
-        document.getElementById('agree_to_policy').addEventListener('change', function() {
-            const agreementDiv = document.getElementById('policyAgreement');
-            if (this.checked) {
-                agreementDiv.classList.add('checked');
-            } else {
-                agreementDiv.classList.remove('checked');
+                alert('Please agree to the Privacy Policy to continue.');
+                policyCheckbox.focus();
             }
         });
 
-        // Initialize checkbox state on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            resetLoginButton();
-            
-            // Set initial checkbox state
-            const policyCheckbox = document.getElementById('agree_to_policy');
-            const agreementDiv = document.getElementById('policyAgreement');
-            if (policyCheckbox.checked) {
-                agreementDiv.classList.add('checked');
-            }
-            
-            const inputs = document.querySelectorAll('input, select');
-            inputs.forEach(input => {
-                input.addEventListener('focus', function() {
-                    this.parentElement.style.transform = 'scale(1.02)';
-                });
-                
-                input.addEventListener('blur', function() {
-                    this.parentElement.style.transform = 'scale(1)';
-                });
-            });
-        });
-
-        // Privacy Policy Modal Functions
         function openPolicyModal() {
             document.getElementById('policyModal').style.display = 'flex';
+            // Auto-scroll to top when opening
+            document.querySelector('.policy-body').scrollTop = 0;
         }
 
         function closePolicyModal() {
@@ -565,26 +537,17 @@ function get_old_checkbox($field) {
 
         function acceptPolicy() {
             const policyCheckbox = document.getElementById('agree_to_policy');
-            const agreementDiv = document.getElementById('policyAgreement');
-            
-            console.log('Accept Policy clicked'); // Debug log
-            console.log('Checkbox found:', policyCheckbox); // Debug log
-            
-            policyCheckbox.checked = true;
-            agreementDiv.classList.add('checked');
-            closePolicyModal();
-            
-            console.log('Checkbox checked:', policyCheckbox.checked); // Debug log
-            
-            // Scroll to the checkbox to show it's checked
-            policyCheckbox.scrollIntoView({ 
-                behavior: 'smooth', 
-                block: 'center' 
-            });
-            
-            // Remove any error styling
-            agreementDiv.style.borderColor = '#7c3aed';
-            agreementDiv.style.background = 'rgba(124, 58, 237, 0.05)';
+            if (policyCheckbox) {
+                policyCheckbox.checked = true;
+                closePolicyModal();
+                
+                // Highlight the agreement section
+                const agreementDiv = document.querySelector('.policy-agreement');
+                if (agreementDiv) {
+                    agreementDiv.style.borderColor = '#7c3aed';
+                    agreementDiv.style.background = 'rgba(124, 58, 237, 0.05)';
+                }
+            }
         }
 
         // Close modal when clicking outside
@@ -599,11 +562,6 @@ function get_old_checkbox($field) {
             if (e.key === 'Escape') {
                 closePolicyModal();
             }
-        });
-
-        // Auto-reset button if user navigates away
-        window.addEventListener('beforeunload', function() {
-            resetLoginButton();
         });
     </script>
 </body>

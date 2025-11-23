@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ﻿# **Face Recognition Attendance System**
 
 A robust system designed to authenticate individuals and record attendance using **facial recognition technology** powered by deep learning. This project simplifies attendance tracking for classrooms, workplaces, or events.
@@ -139,3 +140,7 @@ For any issues or inquiries, feel free to reach out via email: [Francis Njenga](
 https://www.frankcodes.tech
 
 You can send donations to my PayPal account: rajeynjenga@gmail.com
+=======
+# Attendance-for-student
+Goodluck HAHAHAHAHAAHAH
+>>>>>>> 156c8008e33ae3919b6fa9e8da33fbff33f907dd

@@ -604,9 +604,16 @@
                                     echo "<tr id='rowlecture{$row["Id"]}'>";
                                     echo "<td><strong>" . htmlspecialchars($row["firstName"]) . "</strong></td>";
                                     echo "<td>" . htmlspecialchars($row["emailAddress"]) . "</td>";
-                                    echo "<td>" . htmlspecialchars($row["phoneNo"]) . "</td>";
+                                    // Format phone number to ensure +63 format
+                                    $phoneNumber = $row["phoneNo"];
+                                    if (!empty($phoneNumber) && !str_starts_with($phoneNumber, '+63')) {
+                                        // If phone number doesn't start with +63, format it
+                                        $phoneNumber = preg_replace('/^63/', '+63', $phoneNumber);
+                                        $phoneNumber = preg_replace('/^0/', '+63', $phoneNumber);
+                                    }
+                                    echo "<td>" . htmlspecialchars($phoneNumber) . "</td>";
                                     echo "<td><span class='status-badge status-active'>" . htmlspecialchars($row["facultyName"]) . "</span></td>";
-                                    echo "<td>" . htmlspecialchars($row["dateCreated"]) . "</td>";
+                                    echo "<td>" . format_date($row["dateCreated"]) . "</td>";
                                     echo "<td><span><i class='ri-delete-bin-line delete' data-id='{$row["Id"]}' data-name='lecture' title='Delete Lecture'></i></span></td>";
                                     echo "</tr>";
                                 }
@@ -755,7 +762,7 @@
                                     echo "<td><span class='status-badge status-active'>" . htmlspecialchars($row["faculty_name"]) . "</span></td>";
                                     echo "<td><span class='status-badge status-inactive'>" . $row["total_units"] . " units</span></td>";
                                     echo "<td><span class='status-badge status-inactive'>" . $row["total_students"] . " students</span></td>";
-                                    echo "<td>" . htmlspecialchars($row["date_created"]) . "</td>";
+                                    echo "<td>" . format_date($row["date_created"]) . "</td>";
                                     echo "<td><span><i class='ri-delete-bin-line delete' data-id='{$row["Id"]}' data-name='course' title='Delete Course'></i></span></td>";
                                     echo "</tr>";
                                 }

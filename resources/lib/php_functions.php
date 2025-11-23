@@ -108,6 +108,13 @@ function total_rows($tablename)
     echo $total_rows;
 }
 
+function format_date($dateString) {
+    if (empty($dateString) || $dateString == '0000-00-00 00:00:00') {
+        return 'N/A';
+    }
+    return date('M j, Y', strtotime($dateString));
+}
+
 function fetch($sql)
 {
     global $pdo;
@@ -142,3 +149,4 @@ function js_asset($links = [])
         }
     }
 }
+?>

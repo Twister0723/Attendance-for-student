@@ -15,6 +15,15 @@ if (isset($_POST["addLecture"])) {
     $password = $_POST['password'];
     $confirmPassword = $_POST['confirmPassword'];
 
+    // Validate Philippine phone number
+    $phoneErrors = [];
+    $cleanedPhone = preg_replace('/\s+/', '', $phoneNumber);
+    
+    // Check if phone number starts with +63 and has exactly 13 digits (+63 followed by 10 digits)
+    if (!preg_match('/^\+63\d{10}$/', $cleanedPhone)) {
+        $phoneErrors[] = "Phone number must be in format: +63XXXXXXXXXX (11 digits after +63)";
+    }
+
     // Strong password validation
     $passwordErrors = [];
     
@@ -38,7 +47,10 @@ if (isset($_POST["addLecture"])) {
     }
 
     if ($email && $firstName && $lastName && $phoneNumber && $faculty) {
-        if (!empty($passwordErrors)) {
+        if (!empty($phoneErrors)) {
+            $_SESSION['message'] = "Phone number validation failed:<br>" . implode("<br>", $phoneErrors);
+            $_SESSION['message_type'] = "error";
+        } elseif (!empty($passwordErrors)) {
             $_SESSION['message'] = "Password requirements not met:<br>" . implode("<br>", $passwordErrors);
             $_SESSION['message_type'] = "error";
         } else {
@@ -54,15 +66,15 @@ if (isset($_POST["addLecture"])) {
                 } else {
                     $hashedPassword = password_hash($password, PASSWORD_BCRYPT); // Secure password hashing
 
-                    // Insert new lecture
+                    // Insert new lecture WITH PRIVACY POLICY FIELD
                     $query = $pdo->prepare("INSERT INTO tbllecture 
-                        (firstName, lastName, emailAddress, password, phoneNo, facultyCode, dateCreated) 
-                        VALUES (:firstName, :lastName, :email, :password, :phoneNumber, :faculty, :dateCreated)");
+                        (firstName, lastName, emailAddress, password, phoneNo, facultyCode, dateCreated, privacy_policy_accepted) 
+                        VALUES (:firstName, :lastName, :email, :password, :phoneNumber, :faculty, :dateCreated, 0)");
                     $query->bindParam(':firstName', $firstName);
                     $query->bindParam(':lastName', $lastName);
                     $query->bindParam(':email', $email);
                     $query->bindParam(':password', $hashedPassword);
-                    $query->bindParam(':phoneNumber', $phoneNumber);
+                    $query->bindParam(':phoneNumber', $cleanedPhone);
                     $query->bindParam(':faculty', $faculty);
                     $query->bindParam(':dateCreated', $dateRegistered);
 
@@ -303,6 +315,12 @@ if (isset($_POST["addLecture"])) {
             border: 1px solid rgba(16, 185, 129, 0.3);
         }
 
+        .status-pending {
+            background: rgba(245, 158, 11, 0.15);
+            color: #d97706;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
         /* Delete Button */
         .delete {
             color: var(--accent-rose);
@@ -367,6 +385,67 @@ if (isset($_POST["addLecture"])) {
             outline: none;
             box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
             transform: translateY(-2px);
+        }
+
+        /* Phone Number Field Styles */
+        .phone-field {
+            position: relative;
+            margin-bottom: 1rem;
+        }
+
+        .phone-requirements {
+            display: none;
+            position: absolute;
+            background: #fff;
+            border: 2px solid var(--primary-purple);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            z-index: 1000;
+            width: 280px;
+            top: 100%;
+            left: 0;
+            margin-top: 8px;
+        }
+
+        .phone-requirements h4 {
+            margin: 0 0 12px 0;
+            color: var(--dark-slate);
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .phone-requirements ul {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .phone-requirements li {
+            padding: 6px 0;
+            font-size: 13px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .phone-requirements li.valid {
+            color: #059669;
+        }
+
+        .phone-requirements li.invalid {
+            color: #dc3545;
+        }
+
+        .phone-requirements li::before {
+            content: '●';
+            font-size: 8px;
+        }
+
+        .phone-requirements li.valid::before {
+            content: '✓';
+            font-size: 12px;
         }
 
         /* COPIED SUBMIT BUTTON DESIGN FROM VENUE MANAGEMENT */
@@ -598,7 +677,8 @@ if (isset($_POST["addLecture"])) {
                 min-width: 600px;
             }
 
-            .password-requirements {
+            .password-requirements,
+            .phone-requirements {
                 width: 280px;
                 right: 0;
                 left: auto;
@@ -674,6 +754,7 @@ if (isset($_POST["addLecture"])) {
                                 <th>Email Address</th>
                                 <th>Phone No</th>
                                 <th>Faculty</th>
+                                <th>Privacy Policy</th>
                                 <th>Date Registered</th>
                                 <th>Actions</th>
                             </tr>
@@ -689,20 +770,24 @@ if (isset($_POST["addLecture"])) {
                                 
                                 if ($result && count($result) > 0) {
                                     foreach ($result as $row) {
+                                        $privacyStatus = isset($row['privacy_policy_accepted']) && $row['privacy_policy_accepted'] == 1 ? 'Accepted' : 'Pending';
+                                        $statusClass = $privacyStatus === 'Accepted' ? 'status-active' : 'status-pending';
+                                        
                                         echo "<tr id='rowlecture{$row["Id"]}'>";
                                         echo "<td><strong>" . htmlspecialchars($row["firstName"] . " " . $row["lastName"]) . "</strong></td>";
                                         echo "<td>" . htmlspecialchars($row["emailAddress"]) . "</td>";
                                         echo "<td>" . htmlspecialchars($row["phoneNo"]) . "</td>";
                                         echo "<td><span class='status-badge status-active'>" . htmlspecialchars($row["facultyName"] ?? $row["facultyCode"]) . "</span></td>";
+                                        echo "<td><span class='status-badge $statusClass'>$privacyStatus</span></td>";
                                         echo "<td>" . date('M j, Y', strtotime($row["dateCreated"])) . "</td>";
                                         echo "<td><i class='ri-delete-bin-line delete' data-id='{$row["Id"]}' data-name='lecture' title='Delete Lecture'></i></td>";
                                         echo "</tr>";
                                     }
                                 } else {
-                                    echo "<tr><td colspan='6'><div class='empty-state'><i class='ri-user-star-line'></i><p>No lectures found. Add your first lecture above.</p></div></td></tr>";
+                                    echo "<tr><td colspan='7'><div class='empty-state'><i class='ri-user-star-line'></i><p>No lectures found. Add your first lecture above.</p></div></td></tr>";
                                 }
                             } catch (PDOException $e) {
-                                echo "<tr><td colspan='6' style='text-align: center; color: #e11d48; padding: 2rem;'>Error loading lectures: " . htmlspecialchars($e->getMessage()) . "</td></tr>";
+                                echo "<tr><td colspan='7' style='text-align: center; color: #e11d48; padding: 2rem;'>Error loading lectures: " . htmlspecialchars($e->getMessage()) . "</td></tr>";
                             }
                             ?>
                         </tbody>
@@ -725,8 +810,22 @@ if (isset($_POST["addLecture"])) {
                         <input type="text" name="firstName" placeholder="First Name" required>
                         <input type="text" name="lastName" placeholder="Last Name" required>
                         <input type="email" name="email" placeholder="Email Address" required>
-                        <input type="text" name="phoneNumber" placeholder="Phone Number" required>
                         
+                        <div class="phone-field">
+                            <input type="tel" name="phoneNumber" id="phoneNumber" placeholder="+63XXXXXXXXXX" required 
+                                   pattern="^\+63\d{10}$"
+                                   title="Must start with +63 followed by 10 digits (11 digits total)">
+                            
+                            <div class="phone-requirements" id="phoneRequirements">
+                                <h4>Philippine Phone Number Format:</h4>
+                                <ul>
+                                    <li id="reqFormat">Must start with +63</li>
+                                    <li id="reqDigits">Followed by 10 digits (11 digits total)</li>
+                                    <li id="reqExample">Example: +639171234567</li>
+                                </ul>
+                            </div>
+                        </div>
+
                         <div class="password-field">
                             <input type="password" name="password" id="password" placeholder="Enter strong password" required 
                                    pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()\-_=+{};:,<.>])[A-Za-z\d!@#$%^&*()\-_=+{};:,<.>]{8,}$"
@@ -761,6 +860,14 @@ if (isset($_POST["addLecture"])) {
                             ?>
                         </select>
                         
+                        <!-- Privacy Policy Note -->
+                        <div style="background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 8px; padding: 1rem; margin: 1rem 0;">
+                            <p style="margin: 0; font-size: 0.9rem; color: #0369a1; display: flex; align-items: center; gap: 0.5rem;">
+                                <i class="ri-information-line" style="color: #0ea5e9;"></i>
+                                <strong>Note:</strong> New lectures will need to accept the Privacy Policy on their first login.
+                            </p>
+                        </div>
+                        
                         <!-- COPIED SUBMIT BUTTON FROM VENUE MANAGEMENT -->
                         <button type="submit" class="submit" name="addLecture" id="submitBtn">
                             <i class="ri-check-line"></i>
@@ -780,15 +887,19 @@ if (isset($_POST["addLecture"])) {
         const addLectureForm = document.getElementById('form');
         const overlay = document.getElementById('overlay');
         const closeButtons = document.querySelectorAll('.close');
+        const phoneInput = document.getElementById('phoneNumber');
         const passwordInput = document.getElementById('password');
         const confirmPasswordInput = document.getElementById('confirmPassword');
-        const requirements = document.getElementById('passwordRequirements');
+        const phoneRequirements = document.getElementById('phoneRequirements');
+        const passwordRequirements = document.getElementById('passwordRequirements');
         const matchIndicator = document.getElementById('passwordMatch');
         const matchText = document.getElementById('matchText');
         const submitBtn = document.getElementById('submitBtn');
         
+        let phoneValid = false;
         let passwordValid = false;
         let passwordsMatch = false;
+        let phoneFocused = false;
         let passwordFocused = false;
         let confirmPasswordFocused = false;
         
@@ -804,9 +915,11 @@ if (isset($_POST["addLecture"])) {
             addLectureForm.style.display = 'none';
             overlay.style.display = 'none';
             document.body.style.overflow = 'auto';
-            // Reset password indicators when closing form
-            requirements.style.display = 'none';
+            // Reset indicators when closing form
+            phoneRequirements.style.display = 'none';
+            passwordRequirements.style.display = 'none';
             matchIndicator.style.display = 'none';
+            phoneFocused = false;
             passwordFocused = false;
             confirmPasswordFocused = false;
         }
@@ -829,10 +942,16 @@ if (isset($_POST["addLecture"])) {
             e.stopPropagation();
         });
         
-        // Show requirements when password field is focused
+        // Show phone requirements when phone field is focused
+        phoneInput.addEventListener('focus', function() {
+            phoneFocused = true;
+            phoneRequirements.style.display = 'block';
+        });
+        
+        // Show password requirements when password field is focused
         passwordInput.addEventListener('focus', function() {
             passwordFocused = true;
-            requirements.style.display = 'block';
+            passwordRequirements.style.display = 'block';
         });
         
         // Show match indicator when confirm password field is focused
@@ -841,16 +960,23 @@ if (isset($_POST["addLecture"])) {
             matchIndicator.style.display = 'block';
         });
         
-        // Hide requirements when password field loses focus (with delay to allow clicking on requirements)
-        passwordInput.addEventListener('blur', function() {
+        // Hide requirements when fields lose focus (with delay to allow clicking on requirements)
+        phoneInput.addEventListener('blur', function() {
             setTimeout(() => {
-                if (!requirements.matches(':hover') && !passwordFocused) {
-                    requirements.style.display = 'none';
+                if (!phoneRequirements.matches(':hover') && !phoneFocused) {
+                    phoneRequirements.style.display = 'none';
                 }
             }, 200);
         });
         
-        // Hide match indicator when confirm password field loses focus
+        passwordInput.addEventListener('blur', function() {
+            setTimeout(() => {
+                if (!passwordRequirements.matches(':hover') && !passwordFocused) {
+                    passwordRequirements.style.display = 'none';
+                }
+            }, 200);
+        });
+        
         confirmPasswordInput.addEventListener('blur', function() {
             setTimeout(() => {
                 if (!matchIndicator.matches(':hover') && !confirmPasswordFocused) {
@@ -859,19 +985,29 @@ if (isset($_POST["addLecture"])) {
             }, 200);
         });
         
-        // Track mouse events for password requirements
-        requirements.addEventListener('mouseenter', function() {
-            passwordFocused = true;
+        // Track mouse events for requirements panels
+        phoneRequirements.addEventListener('mouseenter', function() {
+            phoneFocused = true;
         });
         
-        requirements.addEventListener('mouseleave', function() {
-            passwordFocused = false;
-            if (!passwordInput.matches(':focus')) {
-                requirements.style.display = 'none';
+        phoneRequirements.addEventListener('mouseleave', function() {
+            phoneFocused = false;
+            if (!phoneInput.matches(':focus')) {
+                phoneRequirements.style.display = 'none';
             }
         });
         
-        // Track mouse events for password match indicator
+        passwordRequirements.addEventListener('mouseenter', function() {
+            passwordFocused = true;
+        });
+        
+        passwordRequirements.addEventListener('mouseleave', function() {
+            passwordFocused = false;
+            if (!passwordInput.matches(':focus')) {
+                passwordRequirements.style.display = 'none';
+            }
+        });
+        
         matchIndicator.addEventListener('mouseenter', function() {
             confirmPasswordFocused = true;
         });
@@ -882,6 +1018,19 @@ if (isset($_POST["addLecture"])) {
                 matchIndicator.style.display = 'none';
             }
         });
+        
+        // Real-time phone number validation
+        function validatePhone() {
+            const phone = phoneInput.value.replace(/\s+/g, '');
+            const isValid = /^\+63\d{10}$/.test(phone);
+            
+            // Update phone requirement indicators
+            document.getElementById('reqFormat').className = phone.startsWith('+63') ? 'valid' : 'invalid';
+            document.getElementById('reqDigits').className = /^\+63\d{10}$/.test(phone) ? 'valid' : 'invalid';
+            
+            phoneValid = isValid;
+            updateSubmitButton();
+        }
         
         // Real-time password validation
         function validatePassword() {
@@ -920,21 +1069,58 @@ if (isset($_POST["addLecture"])) {
             // Update validation flags
             passwordValid = hasLength && hasUppercase && hasLowercase && hasNumber && hasSpecial;
             passwordsMatch = doPasswordsMatch;
-            
-            // Enable/disable submit button based on all requirements
-            submitBtn.disabled = !(passwordValid && passwordsMatch);
+            updateSubmitButton();
         }
         
-        // Add event listeners for both password fields
+        // Update submit button state
+        function updateSubmitButton() {
+            submitBtn.disabled = !(phoneValid && passwordValid && passwordsMatch);
+        }
+        
+        // Add event listeners for validation
+        phoneInput.addEventListener('input', validatePhone);
         passwordInput.addEventListener('input', validatePassword);
         confirmPasswordInput.addEventListener('input', validatePassword);
         
+        // Auto-format phone number
+        phoneInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            
+            if (value.startsWith('63')) {
+                value = '+' + value;
+            } else if (!value.startsWith('+63') && value.length > 0) {
+                value = '+63' + value;
+            }
+            
+            // Limit to 13 characters (+63 + 10 digits)
+            if (value.length > 13) {
+                value = value.substring(0, 13);
+            }
+            
+            e.target.value = value;
+        });
+        
         // Form submission validation
         document.getElementById('lectureForm').addEventListener('submit', function(e) {
-            if (!(passwordValid && passwordsMatch)) {
+            if (!(phoneValid && passwordValid && passwordsMatch)) {
                 e.preventDefault();
-                alert('Please meet all password requirements and ensure passwords match before submitting.');
+                let errorMessage = 'Please fix the following errors:\n';
+                
+                if (!phoneValid) {
+                    errorMessage += '- Philippine phone number format required (+63XXXXXXXXXX)\n';
+                }
                 if (!passwordValid) {
+                    errorMessage += '- Password requirements not met\n';
+                }
+                if (!passwordsMatch) {
+                    errorMessage += '- Passwords do not match\n';
+                }
+                
+                alert(errorMessage);
+                
+                if (!phoneValid) {
+                    phoneInput.focus();
+                } else if (!passwordValid) {
                     passwordInput.focus();
                 } else {
                     confirmPasswordInput.focus();
