@@ -1,8 +1,12 @@
 <?php
+// Set the correct timezone for Philippines (Philippine Standard Time)
+date_default_timezone_set('Asia/Manila');
+
 if (isset($_POST["addCourse"])) {
     $courseName = htmlspecialchars(trim($_POST["courseName"]));
     $courseCode = htmlspecialchars(trim($_POST["courseCode"]));
     $facultyID = filter_var($_POST["faculty"], FILTER_VALIDATE_INT);
+    // FIXED: Use current date with correct Philippines timezone
     $dateRegistered = date("Y-m-d");
 
     if ($courseName && $courseCode && $facultyID) {
@@ -37,6 +41,7 @@ if (isset($_POST["addUnit"])) {
     $courseID = filter_var($_POST["course"], FILTER_VALIDATE_INT);
     $startTime = $_POST["startTime"];
     $endTime = $_POST["endTime"];
+    // FIXED: Use current date with correct Philippines timezone
     $dateRegistered = date("Y-m-d");
 
     // ENSURE PROPER MILITARY TIME FORMAT FOR STORAGE
@@ -94,6 +99,7 @@ if (isset($_POST["addUnit"])) {
 if (isset($_POST["addFaculty"])) {
     $facultyName = htmlspecialchars(trim($_POST["facultyName"]));
     $facultyCode = htmlspecialchars(trim($_POST["facultyCode"]));
+    // FIXED: Use current date with correct Philippines timezone
     $dateRegistered = date("Y-m-d");
 
     if ($facultyName && $facultyCode) {
@@ -148,6 +154,9 @@ function formatTimeForDisplay($time) {
         return '--:--';
     }
 }
+
+// DEBUG: Display current server time for troubleshooting
+// echo "<!-- Server Time (Philippines): " . date('Y-m-d H:i:s') . " -->";
 ?>
 
 <!DOCTYPE html>
@@ -163,8 +172,8 @@ function formatTimeForDisplay($time) {
     <style>
         /* Enhanced Color Scheme */
         :root {
-            --primary-purple: #7c3aed;
-            --secondary-purple: #8b5cf6;
+            --primary-blue: #012060;
+            --secondary-blue: #1a4a9b;
             --accent-teal: #0d9488;
             --accent-amber: #d97706;
             --accent-rose: #e11d48;
@@ -172,8 +181,8 @@ function formatTimeForDisplay($time) {
             --light-slate: #475569;
             --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             --card-bg: #ffffff;
-            --sidebar-bg: linear-gradient(180deg, #7c3aed 0%, #5b21b6 100%);
-            --header-bg: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%);
+            --sidebar-bg: linear-gradient(180deg, #012060 0%, #001a4d 100%);
+            --header-bg: linear-gradient(135deg, #012060 0%, #001a4d 100%);
         }
 
         body {
@@ -198,7 +207,7 @@ function formatTimeForDisplay($time) {
             padding: 2.5rem;
             border-radius: 20px;
             margin-bottom: 2rem;
-            box-shadow: 0 10px 30px rgba(124, 58, 237, 0.3);
+            box-shadow: 0 10px 30px rgba(1, 32, 96, 0.3);
             text-align: center;
             position: relative;
             overflow: hidden;
@@ -248,14 +257,14 @@ function formatTimeForDisplay($time) {
             border-radius: 20px;
             padding: 2rem;
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(124, 58, 237, 0.1);
+            border: 1px solid rgba(1, 32, 96, 0.1);
             transition: all 0.3s ease;
             cursor: pointer;
         }
 
         .card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(124, 58, 237, 0.2);
+            box-shadow: 0 15px 40px rgba(1, 32, 96, 0.2);
         }
 
         .card--data {
@@ -265,7 +274,7 @@ function formatTimeForDisplay($time) {
         }
 
         .card--content .add {
-            background: linear-gradient(135deg, var(--primary-purple) 0%, var(--secondary-purple) 100%);
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
             color: white;
             border: none;
             padding: 12px 20px;
@@ -277,12 +286,12 @@ function formatTimeForDisplay($time) {
             align-items: center;
             gap: 8px;
             margin-bottom: 1rem;
-            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
+            box-shadow: 0 4px 15px rgba(1, 32, 96, 0.3);
         }
 
         .card--content .add:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(124, 58, 237, 0.4);
+            box-shadow: 0 6px 20px rgba(1, 32, 96, 0.4);
         }
 
         .card--content h1 {
@@ -294,7 +303,7 @@ function formatTimeForDisplay($time) {
 
         .card--icon--lg {
             font-size: 3rem;
-            color: var(--primary-purple);
+            color: var(--primary-blue);
             opacity: 0.7;
         }
 
@@ -304,7 +313,7 @@ function formatTimeForDisplay($time) {
             padding: 15px;
             background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
             border-radius: 10px;
-            border: 1px solid rgba(124, 58, 237, 0.1);
+            border: 1px solid rgba(1, 32, 96, 0.1);
         }
         
         .time-fields label {
@@ -328,8 +337,8 @@ function formatTimeForDisplay($time) {
 
         .time-fields input[type="time"]:focus {
             outline: none;
-            border-color: var(--primary-purple);
-            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(1, 32, 96, 0.1);
         }
         
         .time-format-note {
@@ -353,12 +362,12 @@ function formatTimeForDisplay($time) {
             z-index: 1000;
             min-width: 450px;
             max-width: 90vw;
-            border: 1px solid rgba(124, 58, 237, 0.2);
+            border: 1px solid rgba(1, 32, 96, 0.2);
         }
 
         .form-title {
             padding: 1.5rem 2rem;
-            background: linear-gradient(135deg, var(--primary-purple) 0%, var(--secondary-purple) 100%);
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
             color: white;
             border-radius: 20px 20px 0 0;
             font-weight: 600;
@@ -385,14 +394,14 @@ function formatTimeForDisplay($time) {
         .formDiv input[type="text"]:focus,
         .formDiv select:focus {
             outline: none;
-            border-color: var(--primary-purple);
-            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(1, 32, 96, 0.1);
             transform: translateY(-2px);
         }
 
         /* Enhanced Submit Button - LIKE YOUR EXAMPLE */
         .submit {
-            background: linear-gradient(135deg, var(--primary-purple) 0%, var(--secondary-purple) 100%);
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
             color: white;
             border: none;
             padding: 1rem 2rem;
@@ -402,14 +411,14 @@ function formatTimeForDisplay($time) {
             font-weight: 600;
             margin-top: 1rem;
             width: 100%;
-            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
+            box-shadow: 0 4px 15px rgba(1, 32, 96, 0.3);
             transition: all 0.3s ease;
             font-family: inherit;
         }
 
         .submit:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(124, 58, 237, 0.4);
+            box-shadow: 0 6px 20px rgba(1, 32, 96, 0.4);
         }
 
         .close {
@@ -481,7 +490,7 @@ function formatTimeForDisplay($time) {
             padding: 2rem;
             margin-bottom: 2rem;
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(124, 58, 237, 0.1);
+            border: 1px solid rgba(1, 32, 96, 0.1);
         }
 
         .table-header {
@@ -490,7 +499,7 @@ function formatTimeForDisplay($time) {
             align-items: center;
             margin-bottom: 2rem;
             padding-bottom: 1.5rem;
-            border-bottom: 2px solid rgba(124, 58, 237, 0.1);
+            border-bottom: 2px solid rgba(1, 32, 96, 0.1);
         }
 
         .section--title {
@@ -507,7 +516,7 @@ function formatTimeForDisplay($time) {
             bottom: -12px;
             width: 60px;
             height: 4px;
-            background: linear-gradient(135deg, var(--primary-purple) 0%, var(--secondary-purple) 100%);
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
             border-radius: 2px;
         }
 
@@ -515,14 +524,14 @@ function formatTimeForDisplay($time) {
             padding: 0.5rem 1rem;
             border-radius: 10px;
             font-weight: 700;
-            background: rgba(124, 58, 237, 0.1);
-            color: var(--primary-purple);
+            background: rgba(1, 32, 96, 0.1);
+            color: var(--primary-blue);
         }
 
         .table {
             overflow-x: auto;
             border-radius: 15px;
-            border: 1px solid rgba(124, 58, 237, 0.1);
+            border: 1px solid rgba(1, 32, 96, 0.1);
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
         }
 
@@ -533,7 +542,7 @@ function formatTimeForDisplay($time) {
         }
 
         thead {
-            background: linear-gradient(135deg, var(--primary-purple) 0%, var(--secondary-purple) 100%);
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
         }
 
         th {
@@ -559,7 +568,7 @@ function formatTimeForDisplay($time) {
 
         td {
             padding: 1.25rem;
-            border-bottom: 1px solid rgba(124, 58, 237, 0.1);
+            border-bottom: 1px solid rgba(1, 32, 96, 0.1);
             font-size: 0.95rem;
             transition: all 0.2s ease;
         }
@@ -569,7 +578,7 @@ function formatTimeForDisplay($time) {
         }
 
         tbody tr:hover {
-            background: linear-gradient(135deg, rgba(124, 58, 237, 0.05) 0%, rgba(139, 92, 246, 0.05) 100%);
+            background: linear-gradient(135deg, rgba(1, 32, 96, 0.05) 0%, rgba(26, 74, 155, 0.05) 100%);
             transform: translateX(5px);
         }
 
@@ -635,10 +644,6 @@ function formatTimeForDisplay($time) {
                 width: 100%;
                 justify-content: center;
             }
-
-            
-
-
         }
     </style>
 </head>
@@ -741,7 +746,7 @@ function formatTimeForDisplay($time) {
                                     echo "<tr id='rowcourse{$row["Id"]}'>";
                                     echo "<td><strong>" . $row["course_name"] . "</strong></td>";
                                     echo "<td>" . $row["faculty_name"] . "</td>";
-                                    echo "<td><span style='background: rgba(124, 58, 237, 0.1); color: var(--primary-purple); padding: 4px 8px; border-radius: 6px; font-weight: 700;'>" . $row["total_units"] . "</span></td>";
+                                    echo "<td><span style='background: rgba(1, 32, 96, 0.1); color: var(--primary-blue); padding: 4px 8px; border-radius: 6px; font-weight: 700;'>" . $row["total_units"] . "</span></td>";
                                     echo "<td><span style='background: rgba(13, 148, 136, 0.1); color: var(--accent-teal); padding: 4px 8px; border-radius: 6px; font-weight: 700;'>" . $row["total_students"] . "</span></td>";
                                     echo "<td>" . $row["date_created"] . "</td>";
                                     echo "<td><span><i class='ri-delete-bin-line delete' data-id='{$row["Id"]}' data-name='course' title='Delete Course'></i></span></td>";
@@ -859,7 +864,7 @@ function formatTimeForDisplay($time) {
                                     echo "<tr id='rowfaculty{$row["Id"]}'>";
                                     echo "<td><strong>" . $row["faculty_code"] . "</strong></td>";
                                     echo "<td>" . $row["faculty_name"] . "</td>";
-                                    echo "<td><span style='background: rgba(124, 58, 237, 0.1); color: var(--primary-purple); padding: 4px 8px; border-radius: 6px; font-weight: 700;'>" . $row["total_courses"] . "</span></td>";
+                                    echo "<td><span style='background: rgba(1, 32, 96, 0.1); color: var(--primary-blue); padding: 4px 8px; border-radius: 6px; font-weight: 700;'>" . $row["total_courses"] . "</span></td>";
                                     echo "<td><span style='background: rgba(13, 148, 136, 0.1); color: var(--accent-teal); padding: 4px 8px; border-radius: 6px; font-weight: 700;'>" . $row["total_students"] . "</span></td>";
                                     echo "<td><span style='background: rgba(217, 119, 6, 0.1); color: var(--accent-amber); padding: 4px 8px; border-radius: 6px; font-weight: 700;'>" . $row["total_lectures"] . "</span></td>";
                                     echo "<td>" . $row["date_created"] . "</td>";

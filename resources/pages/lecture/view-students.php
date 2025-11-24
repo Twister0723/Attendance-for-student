@@ -36,19 +36,19 @@ if (!empty($unitCode)) {
     <link rel="stylesheet" href="resources/assets/css/styles.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.2.0/remixicon.css" rel="stylesheet">
     <style>
-        /* Enhanced Color Scheme */
+        /* Enhanced Color Scheme with Hex #012060 */
         :root {
-            --primary-purple: #7c3aed;
-            --secondary-purple: #8b5cf6;
+            --primary-blue: #012060;
+            --secondary-blue: #1a3a8f;
             --accent-teal: #0d9488;
             --accent-amber: #d97706;
             --accent-rose: #e11d48;
             --dark-slate: #1e293b;
             --light-slate: #475569;
-            --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --bg-gradient: linear-gradient(135deg, #012060 0%, #1a3a8f 100%);
             --card-bg: #ffffff;
-            --sidebar-bg: linear-gradient(180deg, #7c3aed 0%, #5b21b6 100%);
-            --header-bg: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%);
+            --sidebar-bg: linear-gradient(180deg, #012060 0%, #001240 100%);
+            --header-bg: linear-gradient(135deg, #012060 0%, #001240 100%);
         }
 
         body {
@@ -68,7 +68,7 @@ if (!empty($unitCode)) {
             padding: 2.5rem;
             border-radius: 20px;
             margin-bottom: 2rem;
-            box-shadow: 0 10px 30px rgba(124, 58, 237, 0.3);
+            box-shadow: 0 10px 30px rgba(1, 32, 96, 0.3);
             text-align: center;
             position: relative;
             overflow: hidden;
@@ -114,7 +114,7 @@ if (!empty($unitCode)) {
             padding: 2rem;
             margin-bottom: 2rem;
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(124, 58, 237, 0.1);
+            border: 1px solid rgba(1, 32, 96, 0.1);
         }
 
         .form-grid {
@@ -140,7 +140,7 @@ if (!empty($unitCode)) {
         }
 
         .form-group label i {
-            color: var(--primary-purple);
+            color: var(--primary-blue);
             font-size: 1.1rem;
         }
 
@@ -156,19 +156,19 @@ if (!empty($unitCode)) {
 
         .form-control:focus {
             outline: none;
-            border-color: var(--primary-purple);
-            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1), 0 4px 12px rgba(124, 58, 237, 0.1);
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(1, 32, 96, 0.1), 0 4px 12px rgba(1, 32, 96, 0.1);
             transform: translateY(-2px);
         }
 
         /* Selected Course Info */
         .selection-info {
-            background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%);
+            background: linear-gradient(135deg, #012060 0%, #001240 100%);
             color: white;
             border-radius: 15px;
             padding: 1.5rem;
             margin-bottom: 2rem;
-            box-shadow: 0 8px 25px rgba(124, 58, 237, 0.3);
+            box-shadow: 0 8px 25px rgba(1, 32, 96, 0.3);
             display: <?php echo (!empty($courseCode)) ? 'block' : 'none'; ?>;
         }
 
@@ -239,14 +239,14 @@ if (!empty($unitCode)) {
         }
 
         .btn-refresh {
-            background: linear-gradient(135deg, var(--primary-purple) 0%, var(--secondary-purple) 100%);
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
             color: white;
-            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
+            box-shadow: 0 4px 15px rgba(1, 32, 96, 0.3);
         }
 
         .btn-refresh:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(124, 58, 237, 0.4);
+            box-shadow: 0 6px 20px rgba(1, 32, 96, 0.4);
         }
 
         /* Enhanced Table Styles */
@@ -256,7 +256,7 @@ if (!empty($unitCode)) {
             padding: 2rem;
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
             margin-bottom: 2rem;
-            border: 1px solid rgba(124, 58, 237, 0.1);
+            border: 1px solid rgba(1, 32, 96, 0.1);
         }
 
         .table-header {
@@ -265,7 +265,7 @@ if (!empty($unitCode)) {
             align-items: center;
             margin-bottom: 2rem;
             padding-bottom: 1.5rem;
-            border-bottom: 2px solid rgba(124, 58, 237, 0.1);
+            border-bottom: 2px solid rgba(1, 32, 96, 0.1);
         }
 
         .table-title {
@@ -282,7 +282,7 @@ if (!empty($unitCode)) {
             bottom: -16px;
             width: 60px;
             height: 4px;
-            background: linear-gradient(135deg, var(--primary-purple) 0%, var(--secondary-purple) 100%);
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
             border-radius: 2px;
         }
 
@@ -296,14 +296,14 @@ if (!empty($unitCode)) {
             padding: 0.5rem 1rem;
             border-radius: 10px;
             font-weight: 700;
-            background: rgba(124, 58, 237, 0.1);
-            color: var(--primary-purple);
+            background: rgba(1, 32, 96, 0.1);
+            color: var(--primary-blue);
         }
 
         .table {
             overflow-x: auto;
             border-radius: 15px;
-            border: 1px solid rgba(124, 58, 237, 0.1);
+            border: 1px solid rgba(1, 32, 96, 0.1);
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
         }
 
@@ -314,7 +314,7 @@ if (!empty($unitCode)) {
         }
 
         thead {
-            background: linear-gradient(135deg, var(--primary-purple) 0%, var(--secondary-purple) 100%);
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
         }
 
         th {
@@ -340,7 +340,7 @@ if (!empty($unitCode)) {
 
         td {
             padding: 1.25rem;
-            border-bottom: 1px solid rgba(124, 58, 237, 0.1);
+            border-bottom: 1px solid rgba(1, 32, 96, 0.1);
             font-size: 0.95rem;
             transition: all 0.2s ease;
         }
@@ -350,7 +350,7 @@ if (!empty($unitCode)) {
         }
 
         tbody tr:hover {
-            background: linear-gradient(135deg, rgba(124, 58, 237, 0.05) 0%, rgba(139, 92, 246, 0.05) 100%);
+            background: linear-gradient(135deg, rgba(1, 32, 96, 0.05) 0%, rgba(26, 58, 143, 0.05) 100%);
             transform: translateX(5px);
         }
 
@@ -359,7 +359,7 @@ if (!empty($unitCode)) {
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary-purple) 0%, var(--secondary-purple) 100%);
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -389,8 +389,8 @@ if (!empty($unitCode)) {
         .reg-number {
             font-family: 'Courier New', monospace;
             font-weight: 700;
-            color: var(--primary-purple);
-            background: rgba(124, 58, 237, 0.1);
+            color: var(--primary-blue);
+            background: rgba(1, 32, 96, 0.1);
             padding: 4px 8px;
             border-radius: 6px;
             font-size: 0.85rem;
@@ -526,8 +526,8 @@ if (!empty($unitCode)) {
 
         .search-input:focus {
             outline: none;
-            border-color: var(--primary-purple);
-            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(1, 32, 96, 0.1);
         }
 
         .search-icon {

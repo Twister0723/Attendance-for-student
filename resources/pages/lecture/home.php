@@ -133,8 +133,8 @@ function getTodaysAttendance($course, $unit) {
     <style>
         /* Enhanced Color Scheme */
         :root {
-            --primary-purple: #7c3aed;
-            --secondary-purple: #8b5cf6;
+            --primary-blue: #012060;
+            --secondary-blue: #1a4a9b;
             --accent-teal: #0d9488;
             --accent-amber: #d97706;
             --accent-rose: #e11d48;
@@ -142,8 +142,8 @@ function getTodaysAttendance($course, $unit) {
             --light-slate: #475569;
             --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             --card-bg: #ffffff;
-            --sidebar-bg: linear-gradient(180deg, #7c3aed 0%, #5b21b6 100%);
-            --header-bg: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%);
+            --sidebar-bg: linear-gradient(180deg, #012060 0%, #001a4d 100%);
+            --header-bg: linear-gradient(135deg, #012060 0%, #001a4d 100%);
         }
 
         body {
@@ -158,7 +158,7 @@ function getTodaysAttendance($course, $unit) {
             padding: 2.5rem;
             border-radius: 20px;
             margin-bottom: 2rem;
-            box-shadow: 0 10px 30px rgba(124, 58, 237, 0.3);
+            box-shadow: 0 10px 30px rgba(1, 32, 96, 0.3);
             text-align: center;
             position: relative;
             overflow: hidden;
@@ -203,7 +203,7 @@ function getTodaysAttendance($course, $unit) {
             padding: 2rem;
             margin-bottom: 2rem;
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(124, 58, 237, 0.1);
+            border: 1px solid rgba(1, 32, 96, 0.1);
             background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
         }
 
@@ -230,7 +230,7 @@ function getTodaysAttendance($course, $unit) {
         }
 
         .form-group label i {
-            color: var(--primary-purple);
+            color: var(--primary-blue);
             font-size: 1.1rem;
         }
 
@@ -246,18 +246,18 @@ function getTodaysAttendance($course, $unit) {
 
         .form-control:focus {
             outline: none;
-            border-color: var(--primary-purple);
-            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1), 0 4px 12px rgba(124, 58, 237, 0.1);
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(1, 32, 96, 0.1), 0 4px 12px rgba(1, 32, 96, 0.1);
             transform: translateY(-2px);
         }
 
         .time-status-card {
-            background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%);
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
             color: white;
             border-radius: 20px;
             padding: 2rem;
             margin-bottom: 2rem;
-            box-shadow: 0 10px 30px rgba(124, 58, 237, 0.3);
+            box-shadow: 0 10px 30px rgba(1, 32, 96, 0.3);
             position: relative;
             overflow: hidden;
         }
@@ -377,13 +377,13 @@ function getTodaysAttendance($course, $unit) {
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, var(--primary-purple) 0%, var(--secondary-purple) 100%);
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
             color: white;
         }
 
         .btn-primary:hover {
             transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(124, 58, 237, 0.4);
+            box-shadow: 0 8px 25px rgba(1, 32, 96, 0.4);
         }
 
         .btn-success {
@@ -424,7 +424,7 @@ function getTodaysAttendance($course, $unit) {
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
             text-align: center;
             display: none;
-            border: 1px solid rgba(124, 58, 237, 0.1);
+            border: 1px solid rgba(1, 32, 96, 0.1);
         }
 
         .video-wrapper {
@@ -455,7 +455,7 @@ function getTodaysAttendance($course, $unit) {
             padding: 2rem;
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
             margin-bottom: 2rem;
-            border: 1px solid rgba(124, 58, 237, 0.1);
+            border: 1px solid rgba(1, 32, 96, 0.1);
         }
 
         .table-header {
@@ -464,7 +464,7 @@ function getTodaysAttendance($course, $unit) {
             align-items: center;
             margin-bottom: 2rem;
             padding-bottom: 1.5rem;
-            border-bottom: 2px solid rgba(124, 58, 237, 0.1);
+            border-bottom: 2px solid rgba(1, 32, 96, 0.1);
         }
 
         .table-title {
@@ -481,14 +481,14 @@ function getTodaysAttendance($course, $unit) {
             bottom: -16px;
             width: 60px;
             height: 4px;
-            background: linear-gradient(135deg, var(--primary-purple) 0%, var(--secondary-purple) 100%);
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
             border-radius: 2px;
         }
 
         .table {
             overflow-x: auto;
             border-radius: 15px;
-            border: 1px solid rgba(124, 58, 237, 0.1);
+            border: 1px solid rgba(1, 32, 96, 0.1);
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
         }
 
@@ -498,7 +498,7 @@ function getTodaysAttendance($course, $unit) {
         }
 
         thead {
-            background: linear-gradient(135deg, var(--primary-purple) 0%, var(--secondary-purple) 100%);
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
         }
 
         th {
@@ -523,7 +523,7 @@ function getTodaysAttendance($course, $unit) {
 
         td {
             padding: 1.25rem;
-            border-bottom: 1px solid rgba(124, 58, 237, 0.1);
+            border-bottom: 1px solid rgba(1, 32, 96, 0.1);
             font-size: 0.95rem;
             transition: all 0.2s ease;
         }
@@ -533,7 +533,7 @@ function getTodaysAttendance($course, $unit) {
         }
 
         tbody tr:hover {
-            background: linear-gradient(135deg, rgba(124, 58, 237, 0.05) 0%, rgba(139, 92, 246, 0.05) 100%);
+            background: linear-gradient(135deg, rgba(1, 32, 96, 0.05) 0%, rgba(26, 74, 155, 0.05) 100%);
             transform: translateX(5px);
         }
 
@@ -664,8 +664,8 @@ function getTodaysAttendance($course, $unit) {
             padding: 0.5rem 1rem;
             border-radius: 10px;
             font-weight: 700;
-            background: rgba(124, 58, 237, 0.1);
-            color: var(--primary-purple);
+            background: rgba(1, 32, 96, 0.1);
+            color: var(--primary-blue);
         }
     </style>
 </head>
@@ -913,7 +913,7 @@ function getTodaysAttendance($course, $unit) {
                     <span style="background: rgba(16, 185, 129, 0.1); color: #10b981;"><strong>${presentCount}</strong> Present</span>
                     <span style="background: rgba(245, 158, 11, 0.1); color: #f59e0b;"><strong>${lateCount}</strong> Late</span>
                     <span style="background: rgba(239, 68, 68, 0.1); color: #ef4444;"><strong>${absentCount}</strong> Absent</span>
-                    <span style="background: rgba(124, 58, 237, 0.1); color: #7c3aed;"><strong>${totalStudents}</strong> Total</span>
+                    <span style="background: rgba(1, 32, 96, 0.1); color: #012060;"><strong>${totalStudents}</strong> Total</span>
                 </div>
             `;
         }
@@ -1153,6 +1153,10 @@ function getTodaysAttendance($course, $unit) {
 
     // FIXED: END Attendance button with INDIVIDUAL timestamps
     document.getElementById('endAttendance').addEventListener('click', async () => {
+        console.log("🔧 END Attendance Taking started…");
+
+        // Reset attendance cache
+        attendanceRecords = {};
         isAttendanceMarked = true;
 
         let endAttendanceStatus = 'Present';
@@ -1188,8 +1192,12 @@ function getTodaysAttendance($course, $unit) {
             }
         });
 
+        const course = document.getElementById('courseSelect').value;
+        const unit = document.getElementById('unitSelect').value;
+
+        // Process each student with individual timestamps
         for (const studentID of studentsToMark) {
-            // FIX: Generate INDIVIDUAL timestamp for each student
+            // Get INDIVIDUAL timestamp for each student
             const individualTime = await getServerTime();
             const time = formatTimeForDisplay(individualTime);
             const date = individualTime.toLocaleDateString('en-US', { 
@@ -1198,19 +1206,20 @@ function getTodaysAttendance($course, $unit) {
                 year: '2-digit' 
             });
 
+            // Store individual record
             attendanceRecords[studentID] = { 
                 status: endAttendanceStatus, 
-                time: time,  // ← INDIVIDUAL TIME!
-                date: date,  // ← INDIVIDUAL DATE!
+                time: time,  // Individual time
+                date: date,  // Individual date
                 showTime: true,
                 fromServer: false
             };
+
+            // Update UI immediately
             updateStudentTableStatus(studentID, endAttendanceStatus, time, date, true);
             markedCount++;
 
-            const course = document.getElementById('courseSelect').value;
-            const unit = document.getElementById('unitSelect').value;
-            
+            // Send to backend with individual timestamp
             const attendanceData = [{
                 studentID: studentID,
                 attendanceStatus: endAttendanceStatus,
@@ -1218,11 +1227,19 @@ function getTodaysAttendance($course, $unit) {
                 unit: unit
             }];
 
-            await fetch('', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(attendanceData)
-            });
+            try {
+                await fetch('', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(attendanceData)
+                });
+                console.log(`✅ Marked ${studentID} at ${time}`);
+            } catch (error) {
+                console.error(`❌ Failed to mark ${studentID}:`, error);
+            }
+
+            // Small delay to ensure unique timestamps
+            await new Promise(resolve => setTimeout(resolve, 100));
         }
         
         updateTableStats();

@@ -210,7 +210,7 @@ if (isset($_SESSION['needs_policy_agreement']) && $_SESSION['needs_policy_agreem
             overflow: hidden;
         }
         .policy-header {
-            background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%);
+            background: linear-gradient(135deg, #98cb0e 0%, #7ca80b 100%);
             color: white;
             padding: 1.5rem 2rem;
             border-radius: 20px 20px 0 0;
@@ -227,7 +227,7 @@ if (isset($_SESSION['needs_policy_agreement']) && $_SESSION['needs_policy_agreem
             color: #1e293b;
         }
         .policy-body h3 {
-            color: #7c3aed;
+            color: #98cb0e;
             margin-top: 1.5rem;
             margin-bottom: 0.5rem;
             font-size: 1.1rem;
@@ -280,7 +280,7 @@ if (isset($_SESSION['needs_policy_agreement']) && $_SESSION['needs_policy_agreem
             transform: scale(1.1);
         }
         .btn-policy {
-            background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%);
+            background: linear-gradient(135deg, #98cb0e 0%, #7ca80b 100%);
             color: white;
             border: none;
             padding: 1rem 2rem;
@@ -294,21 +294,21 @@ if (isset($_SESSION['needs_policy_agreement']) && $_SESSION['needs_policy_agreem
             justify-content: center;
             gap: 0.5rem;
             width: 100%;
-            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
+            box-shadow: 0 4px 15px rgba(152, 203, 14, 0.3);
         }
         .btn-policy:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(124, 58, 237, 0.4);
+            box-shadow: 0 6px 20px rgba(152, 203, 14, 0.4);
         }
         .policy-link {
-            color: #7c3aed;
+            color: #98cb0e;
             text-decoration: none;
             font-weight: 600;
             cursor: pointer;
             transition: color 0.3s ease;
         }
         .policy-link:hover {
-            color: #5b21b6;
+            color: #7ca80b;
             text-decoration: underline;
         }
         .highlight {
@@ -544,8 +544,8 @@ if (isset($_SESSION['needs_policy_agreement']) && $_SESSION['needs_policy_agreem
                 // Highlight the agreement section
                 const agreementDiv = document.querySelector('.policy-agreement');
                 if (agreementDiv) {
-                    agreementDiv.style.borderColor = '#7c3aed';
-                    agreementDiv.style.background = 'rgba(124, 58, 237, 0.05)';
+                    agreementDiv.style.borderColor = '#98cb0e';
+                    agreementDiv.style.background = 'rgba(152, 203, 14, 0.05)';
                 }
             }
         }

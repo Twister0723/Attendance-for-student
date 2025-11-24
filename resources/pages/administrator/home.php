@@ -1,3 +1,8 @@
+<?php
+// Set the correct timezone for Philippines (Philippine Standard Time)
+date_default_timezone_set('Asia/Manila');
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -12,8 +17,8 @@
     <style>
         /* Enhanced Color Scheme */
         :root {
-            --primary-purple: #7c3aed;
-            --secondary-purple: #8b5cf6;
+            --primary-blue: #012060;
+            --secondary-blue: #1a4a9b;
             --accent-teal: #0d9488;
             --accent-amber: #d97706;
             --accent-rose: #e11d48;
@@ -21,8 +26,8 @@
             --light-slate: #475569;
             --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             --card-bg: #ffffff;
-            --sidebar-bg: linear-gradient(180deg, #7c3aed 0%, #5b21b6 100%);
-            --header-bg: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%);
+            --sidebar-bg: linear-gradient(180deg, #012060 0%, #001a4d 100%);
+            --header-bg: linear-gradient(135deg, #012060 0%, #001a4d 100%);
         }
 
         body {
@@ -43,7 +48,7 @@
             padding: 2.5rem;
             border-radius: 20px;
             margin-bottom: 2rem;
-            box-shadow: 0 10px 30px rgba(124, 58, 237, 0.3);
+            box-shadow: 0 10px 30px rgba(1, 32, 96, 0.3);
             text-align: center;
             position: relative;
             overflow: hidden;
@@ -89,7 +94,7 @@
             padding: 2rem;
             margin-bottom: 2rem;
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(124, 58, 237, 0.1);
+            border: 1px solid rgba(1, 32, 96, 0.1);
         }
 
         .overview .title {
@@ -98,7 +103,7 @@
             justify-content: space-between;
             margin-bottom: 2rem;
             padding-bottom: 1.5rem;
-            border-bottom: 2px solid rgba(124, 58, 237, 0.1);
+            border-bottom: 2px solid rgba(1, 32, 96, 0.1);
         }
 
         .section--title {
@@ -115,7 +120,7 @@
             bottom: -12px;
             width: 50px;
             height: 4px;
-            background: linear-gradient(135deg, var(--primary-purple) 0%, var(--secondary-purple) 100%);
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
             border-radius: 2px;
         }
 
@@ -134,8 +139,8 @@
         }
 
         .dropdown:focus {
-            border-color: var(--primary-purple);
-            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(1, 32, 96, 0.1);
         }
 
         /* Enhanced Cards */
@@ -151,7 +156,7 @@
             border-radius: 20px;
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
             transition: all 0.3s ease;
-            border: 1px solid rgba(124, 58, 237, 0.1);
+            border: 1px solid rgba(1, 32, 96, 0.1);
             position: relative;
             overflow: hidden;
         }
@@ -163,7 +168,7 @@
             left: 0;
             width: 100%;
             height: 4px;
-            background: linear-gradient(135deg, var(--primary-purple) 0%, var(--secondary-purple) 100%);
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
             opacity: 0;
             transition: opacity 0.3s ease;
         }
@@ -178,7 +183,7 @@
         }
 
         .card-1 {
-            border-left: 4px solid var(--primary-purple);
+            border-left: 4px solid var(--primary-blue);
         }
 
         .card-2 {
@@ -235,7 +240,7 @@
         }
 
         .card-1 .card--icon--lg {
-            color: var(--primary-purple);
+            color: var(--primary-blue);
         }
 
         .card-2 .card--icon--lg {
@@ -257,7 +262,7 @@
             padding: 2rem;
             margin-bottom: 2rem;
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(124, 58, 237, 0.1);
+            border: 1px solid rgba(1, 32, 96, 0.1);
             transition: all 0.3s ease;
         }
 
@@ -271,7 +276,7 @@
             justify-content: space-between;
             margin-bottom: 1.5rem;
             padding-bottom: 1.5rem;
-            border-bottom: 2px solid rgba(124, 58, 237, 0.1);
+            border-bottom: 2px solid rgba(1, 32, 96, 0.1);
         }
 
         .table-container .section--title {
@@ -279,7 +284,7 @@
         }
 
         .add {
-            background: linear-gradient(135deg, var(--primary-purple) 0%, var(--secondary-purple) 100%);
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
             color: white;
             border: none;
             padding: 0.875rem 1.5rem;
@@ -292,7 +297,7 @@
             align-items: center;
             gap: 0.5rem;
             text-decoration: none;
-            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
+            box-shadow: 0 4px 15px rgba(1, 32, 96, 0.3);
             position: relative;
             overflow: hidden;
         }
@@ -314,13 +319,13 @@
 
         .add:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(124, 58, 237, 0.4);
+            box-shadow: 0 6px 20px rgba(1, 32, 96, 0.4);
         }
 
         .table {
             overflow-x: auto;
             border-radius: 15px;
-            border: 1px solid rgba(124, 58, 237, 0.1);
+            border: 1px solid rgba(1, 32, 96, 0.1);
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
         }
 
@@ -331,7 +336,7 @@
         }
 
         thead {
-            background: linear-gradient(135deg, var(--primary-purple) 0%, var(--secondary-purple) 100%);
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
         }
 
         th {
@@ -357,7 +362,7 @@
 
         td {
             padding: 1.25rem;
-            border-bottom: 1px solid rgba(124, 58, 237, 0.1);
+            border-bottom: 1px solid rgba(1, 32, 96, 0.1);
             font-size: 0.95rem;
             transition: all 0.2s ease;
         }
@@ -367,7 +372,7 @@
         }
 
         tbody tr:hover {
-            background: linear-gradient(135deg, rgba(124, 58, 237, 0.05) 0%, rgba(139, 92, 246, 0.05) 100%);
+            background: linear-gradient(135deg, rgba(1, 32, 96, 0.05) 0%, rgba(26, 74, 155, 0.05) 100%);
         }
 
         /* Delete Button Styling */

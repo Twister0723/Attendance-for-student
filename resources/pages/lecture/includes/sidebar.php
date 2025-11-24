@@ -40,7 +40,7 @@
         </li>
     </ul>
 
-    <!-- Bottom Navigation Items -->
+    <!-- Bottom Navigation Items (Only Logout) -->
     <ul class="sidebar--bottom-items">
         <li>
             <a href="logout">
@@ -55,7 +55,7 @@
     /* Enhanced Sidebar Styles */
     .sidebar {
         width: 280px;
-        background: linear-gradient(180deg, #7c3aed 0%, #5b21b6 100%);
+        background: linear-gradient(180deg, #012060 0%, #001a4d 100%);
         padding: 0;
         display: flex;
         flex-direction: column;
@@ -109,7 +109,7 @@
 
     /* Fallback if logo doesn't load */
     .logo-img:has(img[style*="display: none"]) {
-        background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+        background: linear-gradient(135deg, #1a4a9b 0%, #012060 100%);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -337,7 +337,7 @@
         top: 1rem;
         left: 1rem;
         z-index: 1001;
-        background: #7c3aed;
+        background: #012060;
         color: white;
         border: none;
         border-radius: 8px;
@@ -350,7 +350,7 @@
     }
 
     .mobile-menu-toggle:hover {
-        background: #6d28d9;
+        background: #001a4d;
         transform: scale(1.1);
     }
 </style>

@@ -92,25 +92,24 @@ if (isset($_POST['addStudent'])) {
                 $imagesSaved = false;
                 $capturedImagesCount = 0;
                 
-                for ($i = 1; $i <= 5; $i++) {
-                    if (isset($_POST["capturedImage$i"]) && !empty($_POST["capturedImage$i"])) {
-                        $base64Image = $_POST["capturedImage$i"];
+                // MODIFIED: Only process one image instead of five
+                if (isset($_POST["capturedImage"]) && !empty($_POST["capturedImage"])) {
+                    $base64Image = $_POST["capturedImage"];
+                    
+                    // Check if it's a valid base64 image
+                    if (strpos($base64Image, 'data:image/png;base64,') === 0) {
+                        $base64Data = str_replace('data:image/png;base64,', '', $base64Image);
+                        $base64Data = str_replace(' ', '+', $base64Data);
+                        $imageData = base64_decode($base64Data);
                         
-                        // Check if it's a valid base64 image
-                        if (strpos($base64Image, 'data:image/png;base64,') === 0) {
-                            $base64Data = str_replace('data:image/png;base64,', '', $base64Image);
-                            $base64Data = str_replace(' ', '+', $base64Data);
-                            $imageData = base64_decode($base64Data);
+                        if ($imageData !== false) {
+                            $fileName = "{$registrationNumber}_image.png";
+                            $labelName = "1.png";
                             
-                            if ($imageData !== false) {
-                                $fileName = "{$registrationNumber}_image{$i}.png";
-                                $labelName = "{$i}.png";
-                                
-                                if (file_put_contents("{$folderPath}{$labelName}", $imageData)) {
-                                    $imageFileNames[] = $fileName;
-                                    $imagesSaved = true;
-                                    $capturedImagesCount++;
-                                }
+                            if (file_put_contents("{$folderPath}{$labelName}", $imageData)) {
+                                $imageFileNames[] = $fileName;
+                                $imagesSaved = true;
+                                $capturedImagesCount = 1;
                             }
                         }
                     }
@@ -138,7 +137,7 @@ if (isset($_POST['addStudent'])) {
                     ':dateRegistered' => $dateRegistered
                 ]);
 
-                $_SESSION['message'] = "Student: $registrationNumber added successfully! ($capturedImagesCount images saved)";
+                $_SESSION['message'] = "Student: $registrationNumber added successfully! ($capturedImagesCount image saved)";
                 $_SESSION['message_type'] = "success";
                 
                 // Redirect to clear POST data
@@ -175,8 +174,8 @@ if (isset($_POST['addStudent'])) {
     <style>
         /* Enhanced Color Scheme */
         :root {
-            --primary-purple: #7c3aed;
-            --secondary-purple: #8b5cf6;
+            --primary-blue: #012060;
+            --secondary-blue: #1a4a9b;
             --accent-teal: #0d9488;
             --accent-amber: #d97706;
             --accent-rose: #e11d48;
@@ -202,12 +201,12 @@ if (isset($_POST['addStudent'])) {
 
         /* Dashboard Header */
         .dashboard-header {
-            background: linear-gradient(135deg, var(--primary-purple) 0%, #5b21b6 100%);
+            background: linear-gradient(135deg, var(--primary-blue) 0%, #001a4d 100%);
             color: white;
             padding: 2.5rem;
             border-radius: 20px;
             margin-bottom: 2rem;
-            box-shadow: 0 10px 30px rgba(124, 58, 237, 0.3);
+            box-shadow: 0 10px 30px rgba(1, 32, 96, 0.3);
             text-align: center;
             position: relative;
             overflow: hidden;
@@ -251,7 +250,7 @@ if (isset($_POST['addStudent'])) {
             padding: 2rem;
             margin-bottom: 2rem;
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(124, 58, 237, 0.1);
+            border: 1px solid rgba(1, 32, 96, 0.1);
         }
 
         .table-container .title {
@@ -260,7 +259,7 @@ if (isset($_POST['addStudent'])) {
             justify-content: space-between;
             margin-bottom: 1.5rem;
             padding-bottom: 1.5rem;
-            border-bottom: 2px solid rgba(124, 58, 237, 0.1);
+            border-bottom: 2px solid rgba(1, 32, 96, 0.1);
         }
 
         .section--title {
@@ -277,12 +276,12 @@ if (isset($_POST['addStudent'])) {
             bottom: -12px;
             width: 50px;
             height: 4px;
-            background: linear-gradient(135deg, var(--primary-purple) 0%, var(--secondary-purple) 100%);
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
             border-radius: 2px;
         }
 
         .add {
-            background: linear-gradient(135deg, var(--primary-purple) 0%, var(--secondary-purple) 100%);
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
             color: white;
             border: none;
             padding: 0.875rem 1.5rem;
@@ -294,18 +293,18 @@ if (isset($_POST['addStudent'])) {
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
+            box-shadow: 0 4px 15px rgba(1, 32, 96, 0.3);
         }
 
         .add:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(124, 58, 237, 0.4);
+            box-shadow: 0 6px 20px rgba(1, 32, 96, 0.4);
         }
 
         .table {
             overflow-x: auto;
             border-radius: 15px;
-            border: 1px solid rgba(124, 58, 237, 0.1);
+            border: 1px solid rgba(1, 32, 96, 0.1);
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
         }
 
@@ -316,7 +315,7 @@ if (isset($_POST['addStudent'])) {
         }
 
         thead {
-            background: linear-gradient(135deg, var(--primary-purple) 0%, var(--secondary-purple) 100%);
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
         }
 
         th {
@@ -341,7 +340,7 @@ if (isset($_POST['addStudent'])) {
 
         td {
             padding: 1.25rem;
-            border-bottom: 1px solid rgba(124, 58, 237, 0.1);
+            border-bottom: 1px solid rgba(1, 32, 96, 0.1);
             font-size: 0.95rem;
             transition: all 0.2s ease;
         }
@@ -351,7 +350,7 @@ if (isset($_POST['addStudent'])) {
         }
 
         tbody tr:hover {
-            background: linear-gradient(135deg, rgba(124, 58, 237, 0.05) 0%, rgba(139, 92, 246, 0.05) 100%);
+            background: linear-gradient(135deg, rgba(1, 32, 96, 0.05) 0%, rgba(26, 74, 155, 0.05) 100%);
             transform: translateX(5px);
         }
 
@@ -403,12 +402,12 @@ if (isset($_POST['addStudent'])) {
             max-width: 90vw;
             max-height: 90vh;
             overflow-y: auto;
-            border: 1px solid rgba(124, 58, 237, 0.2);
+            border: 1px solid rgba(1, 32, 96, 0.2);
         }
 
         .form-title {
             padding: 1.5rem 2rem;
-            background: linear-gradient(135deg, var(--primary-purple) 0%, var(--secondary-purple) 100%);
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
             color: white;
             border-radius: 20px 20px 0 0;
             font-weight: 600;
@@ -458,15 +457,15 @@ if (isset($_POST['addStudent'])) {
         }
 
         .formDiv-- input:focus, .formDiv-- select:focus {
-            border-color: var(--primary-purple);
+            border-color: var(--primary-blue);
             outline: none;
-            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+            box-shadow: 0 0 0 3px rgba(1, 32, 96, 0.1);
             transform: translateY(-2px);
         }
 
         /* COPIED SUBMIT BUTTON DESIGN FROM VENUE MANAGEMENT */
         .btn-submit {
-            background: linear-gradient(135deg, var(--primary-purple) 0%, var(--secondary-purple) 100%);
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
             color: white;
             border: none;
             padding: 1rem 2rem;
@@ -476,7 +475,7 @@ if (isset($_POST['addStudent'])) {
             font-weight: 600;
             margin: 1rem 2rem 2rem;
             width: calc(100% - 4rem);
-            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
+            box-shadow: 0 4px 15px rgba(1, 32, 96, 0.3);
             transition: all 0.3s ease;
             font-family: inherit;
             display: flex;
@@ -487,8 +486,8 @@ if (isset($_POST['addStudent'])) {
 
         .btn-submit:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(124, 58, 237, 0.4);
-            background: linear-gradient(135deg, #6d28d9 0%, #4c1d95 100%);
+            box-shadow: 0 6px 20px rgba(1, 32, 96, 0.4);
+            background: linear-gradient(135deg, #001a4d 0%, #001133 100%);
         }
 
         .btn-submit:active {
@@ -574,14 +573,14 @@ if (isset($_POST['addStudent'])) {
         }
 
         .camera-btn:hover {
-            border-color: var(--primary-purple);
-            background: rgba(124, 58, 237, 0.05);
+            border-color: var(--primary-blue);
+            background: rgba(1, 32, 96, 0.05);
             transform: translateY(-2px);
         }
 
         .camera-btn i {
             font-size: 3rem;
-            color: var(--primary-purple);
+            color: var(--primary-blue);
             margin-bottom: 0.5rem;
         }
 
@@ -596,10 +595,10 @@ if (isset($_POST['addStudent'])) {
             margin: 0.25rem 0 0 0;
         }
 
-        #multiple-images {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1rem;
+        #single-image {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 1rem;
         }
 
         .image-preview-container {
@@ -607,11 +606,12 @@ if (isset($_POST['addStudent'])) {
             border-radius: 12px;
             overflow: hidden;
             border: 2px solid #e2e8f0;
+            max-width: 300px;
         }
 
         .image-preview {
             width: 100%;
-            height: 120px;
+            height: 200px;
             object-fit: cover;
         }
 
@@ -619,7 +619,7 @@ if (isset($_POST['addStudent'])) {
             position: absolute;
             top: 8px;
             left: 8px;
-            background: var(--primary-purple);
+            background: var(--primary-blue);
             color: white;
             width: 24px;
             height: 24px;
@@ -690,10 +690,6 @@ if (isset($_POST['addStudent'])) {
 
             table {
                 min-width: 600px;
-            }
-
-            #multiple-images {
-                grid-template-columns: 1fr;
             }
         }
 
@@ -769,7 +765,7 @@ if (isset($_POST['addStudent'])) {
             max-width: 500px;
             border-radius: 12px;
             margin-bottom: 1rem;
-            border: 2px solid var(--primary-purple);
+            border: 2px solid var(--primary-blue);
         }
 
         .camera-controls {
@@ -780,7 +776,7 @@ if (isset($_POST['addStudent'])) {
         }
 
         .capture-btn {
-            background: linear-gradient(135deg, var(--primary-purple) 0%, var(--secondary-purple) 100%);
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
             color: white;
             border: none;
             padding: 1rem 2rem;
@@ -795,7 +791,7 @@ if (isset($_POST['addStudent'])) {
 
         .capture-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(124, 58, 237, 0.4);
+            box-shadow: 0 6px 20px rgba(1, 32, 96, 0.4);
         }
 
         .retake-btn {
@@ -854,14 +850,6 @@ if (isset($_POST['addStudent'])) {
             color: white;
             margin-top: 1rem;
             font-size: 1rem;
-        }
-
-        .camera-counter {
-            text-align: center;
-            color: white;
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
         }
     </style>
 </head>
@@ -979,16 +967,16 @@ if (isset($_POST['addStudent'])) {
                         </div>
                         <div>
                             <div class="form-title-image">
-                                <p>Take Student Pictures</p>
+                                <p>Take Student Picture</p>
                             </div>
                             <button type="button" id="open_camera" class="camera-btn">
                                 <i class="ri-camera-line"></i>
                                 <span>Open Camera</span>
-                                <p>Click to capture student images</p>
+                                <p>Click to capture student image</p>
                             </button>
-                            <div id="imageStatus" class="image-status">No images captured yet</div>
-                            <div id="multiple-images">
-                                <!-- Image previews will be added here -->
+                            <div id="imageStatus" class="image-status">No image captured yet</div>
+                            <div id="single-image">
+                                <!-- Single image preview will be added here -->
                             </div>
                         </div>
                     </div>
@@ -1005,7 +993,6 @@ if (isset($_POST['addStudent'])) {
             <div class="camera-modal" id="cameraModal">
                 <div class="camera-container">
                     <button class="close-camera">&times;</button>
-                    <div class="camera-counter">Image <span id="currentImageCount">1</span> of 5</div>
                     <video id="video" class="camera-preview" autoplay playsinline></video>
                     <canvas id="canvas" style="display: none;"></canvas>
                     <div class="camera-controls">
@@ -1039,14 +1026,10 @@ if (isset($_POST['addStudent'])) {
             const canvas = document.getElementById('canvas');
             const captureBtn = document.getElementById('captureBtn');
             const retakeBtn = document.getElementById('retakeBtn');
-            const submitBtn = document.getElementById('submitBtn');
             const imageStatus = document.getElementById('imageStatus');
-            const currentImageCount = document.getElementById('currentImageCount');
             const openCameraBtn = document.getElementById('open_camera');
             
-            let currentImageIndex = 1;
-            const maxImages = 5;
-            const capturedImages = new Array(maxImages).fill(null);
+            let capturedImage = null;
             let currentStream = null;
             
             // Invalid characters regex
@@ -1072,9 +1055,8 @@ if (isset($_POST['addStudent'])) {
                 document.getElementById('studentForm').reset();
                 validationMessage.style.display = 'none';
                 validationMessage.className = 'validation-message';
-                currentImageIndex = 1;
-                capturedImages.fill(null);
-                updateImagePreviews();
+                capturedImage = null;
+                updateImagePreview();
             }
 
             // Add event listeners to show form buttons
@@ -1103,7 +1085,7 @@ if (isset($_POST['addStudent'])) {
 
             // Open camera when camera button is clicked
             openCameraBtn.addEventListener('click', function() {
-                takeMultipleImages();
+                openCamera();
             });
 
             // Registration number validation
@@ -1133,14 +1115,8 @@ if (isset($_POST['addStudent'])) {
             });
 
             // Camera functionality
-            function takeMultipleImages() {
-                currentImageIndex = 1;
-                openCamera();
-            }
-
             function openCamera() {
                 cameraModal.style.display = 'flex';
-                currentImageCount.textContent = currentImageIndex;
                 captureBtn.style.display = 'flex';
                 retakeBtn.style.display = 'none';
                 
@@ -1192,75 +1168,60 @@ if (isset($_POST['addStudent'])) {
                 console.log('Captured image data length:', imageData.length);
                 
                 // Store the image data
-                capturedImages[currentImageIndex - 1] = imageData;
+                capturedImage = imageData;
                 
                 // Create or update hidden input for the captured image
-                let hiddenInput = document.getElementById(`capturedImage${currentImageIndex}`);
+                let hiddenInput = document.getElementById('capturedImage');
                 if (!hiddenInput) {
                     hiddenInput = document.createElement('input');
                     hiddenInput.type = 'hidden';
-                    hiddenInput.name = `capturedImage${currentImageIndex}`;
-                    hiddenInput.id = `capturedImage${currentImageIndex}`;
+                    hiddenInput.name = 'capturedImage';
+                    hiddenInput.id = 'capturedImage';
                     document.getElementById('studentForm').appendChild(hiddenInput);
                 }
                 hiddenInput.value = imageData;
                 
-                console.log(`Hidden input ${currentImageIndex} created with value length:`, hiddenInput.value.length);
+                console.log('Hidden input created with value length:', hiddenInput.value.length);
                 
-                updateImagePreviews();
-                
-                if (currentImageIndex < maxImages) {
-                    currentImageIndex++;
-                    currentImageCount.textContent = currentImageIndex;
-                    // Continue capturing more images
-                } else {
-                    closeCamera();
-                    alert('Maximum of 5 images captured. You can review them below.');
-                }
+                updateImagePreview();
+                closeCamera();
             });
 
-            function updateImagePreviews() {
-                const multipleImagesContainer = document.getElementById('multiple-images');
-                multipleImagesContainer.innerHTML = '';
+            function updateImagePreview() {
+                const singleImageContainer = document.getElementById('single-image');
+                singleImageContainer.innerHTML = '';
                 
-                let capturedCount = 0;
-                
-                capturedImages.forEach((imageData, index) => {
-                    if (imageData && imageData.length > 1000) { // Ensure it's a valid image
-                        capturedCount++;
-                        const container = document.createElement('div');
-                        container.className = 'image-preview-container';
-                        
-                        const img = document.createElement('img');
-                        img.src = imageData;
-                        img.className = 'image-preview';
-                        img.alt = `Student image ${index + 1}`;
-                        
-                        const number = document.createElement('div');
-                        number.className = 'image-number';
-                        number.textContent = index + 1;
-                        
-                        container.appendChild(img);
-                        container.appendChild(number);
-                        multipleImagesContainer.appendChild(container);
-                    }
-                });
-                
-                // Update image status
-                if (capturedCount > 0) {
-                    imageStatus.textContent = `${capturedCount} image(s) captured successfully`;
+                if (capturedImage && capturedImage.length > 1000) { // Ensure it's a valid image
+                    const container = document.createElement('div');
+                    container.className = 'image-preview-container';
+                    
+                    const img = document.createElement('img');
+                    img.src = capturedImage;
+                    img.className = 'image-preview';
+                    img.alt = 'Student image';
+                    
+                    const number = document.createElement('div');
+                    number.className = 'image-number';
+                    number.textContent = '1';
+                    
+                    container.appendChild(img);
+                    container.appendChild(number);
+                    singleImageContainer.appendChild(container);
+                    
+                    // Update image status
+                    imageStatus.textContent = 'Image captured successfully';
                     imageStatus.className = 'image-status has-images';
                     openCameraBtn.innerHTML = `
                         <i class="ri-camera-line"></i>
-                        <span>Capture More Images</span>
-                        <p>Click to capture additional images</p>
+                        <span>Retake Image</span>
+                        <p>Click to capture a new image</p>
                     `;
                 } else {
-                    imageStatus.textContent = 'No images captured yet';
+                    imageStatus.textContent = 'No image captured yet';
                     imageStatus.className = 'image-status';
                 }
                 
-                console.log('Total captured images:', capturedCount);
+                console.log('Image captured:', capturedImage ? 'Yes' : 'No');
             }
 
             // Form validation before submission
@@ -1285,17 +1246,16 @@ if (isset($_POST['addStudent'])) {
                     return;
                 }
                 
-                // Check if at least one image is captured
-                const hasImages = capturedImages.some(img => img !== null && img.length > 1000);
-                if (!hasImages) {
-                    if (!confirm('No student images captured. Are you sure you want to continue without images?')) {
+                // Check if image is captured
+                if (!capturedImage || capturedImage.length <= 1000) {
+                    if (!confirm('No student image captured. Are you sure you want to continue without an image?')) {
                         e.preventDefault();
                         return;
                     }
                 }
                 
-                // Debug: Log captured images before submission
-                console.log('Form submission - captured images:', capturedImages.filter(img => img !== null && img.length > 1000).length);
+                // Debug: Log captured image before submission
+                console.log('Form submission - captured image:', capturedImage ? 'Yes' : 'No');
             });
 
             // Auto-hide messages after 5 seconds

@@ -82,8 +82,8 @@ if (isset($_POST["addVenue"])) {
     <style>
         /* Enhanced Color Scheme */
         :root {
-            --primary-purple: #7c3aed;
-            --secondary-purple: #8b5cf6;
+            --primary-blue: #012060;
+            --secondary-blue: #1a4a9b;
             --accent-teal: #0d9488;
             --accent-amber: #d97706;
             --accent-rose: #e11d48;
@@ -109,12 +109,12 @@ if (isset($_POST["addVenue"])) {
 
         /* Dashboard Header */
         .dashboard-header {
-            background: linear-gradient(135deg, var(--primary-purple) 0%, #5b21b6 100%);
+            background: linear-gradient(135deg, var(--primary-blue) 0%, #001a4d 100%);
             color: white;
             padding: 2.5rem;
             border-radius: 20px;
             margin-bottom: 2rem;
-            box-shadow: 0 10px 30px rgba(124, 58, 237, 0.3);
+            box-shadow: 0 10px 30px rgba(1, 32, 96, 0.3);
             text-align: center;
             position: relative;
             overflow: hidden;
@@ -158,7 +158,7 @@ if (isset($_POST["addVenue"])) {
             padding: 2rem;
             margin-bottom: 2rem;
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(124, 58, 237, 0.1);
+            border: 1px solid rgba(1, 32, 96, 0.1);
         }
 
         .rooms .title {
@@ -167,7 +167,7 @@ if (isset($_POST["addVenue"])) {
             justify-content: space-between;
             margin-bottom: 2rem;
             padding-bottom: 1.5rem;
-            border-bottom: 2px solid rgba(124, 58, 237, 0.1);
+            border-bottom: 2px solid rgba(1, 32, 96, 0.1);
         }
 
         .section--title {
@@ -184,7 +184,7 @@ if (isset($_POST["addVenue"])) {
             bottom: -12px;
             width: 50px;
             height: 4px;
-            background: linear-gradient(135deg, var(--primary-purple) 0%, var(--secondary-purple) 100%);
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
             border-radius: 2px;
         }
 
@@ -209,12 +209,12 @@ if (isset($_POST["addVenue"])) {
         }
 
         .dropdown:focus {
-            border-color: var(--primary-purple);
-            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(1, 32, 96, 0.1);
         }
 
         .add {
-            background: linear-gradient(135deg, var(--primary-purple) 0%, var(--secondary-purple) 100%);
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
             color: white;
             border: none;
             padding: 0.875rem 1.5rem;
@@ -226,12 +226,12 @@ if (isset($_POST["addVenue"])) {
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
+            box-shadow: 0 4px 15px rgba(1, 32, 96, 0.3);
         }
 
         .add:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(124, 58, 237, 0.4);
+            box-shadow: 0 6px 20px rgba(1, 32, 96, 0.4);
         }
 
         /* Rooms Cards */
@@ -248,7 +248,7 @@ if (isset($_POST["addVenue"])) {
             text-decoration: none;
             color: var(--dark-slate);
             transition: all 0.3s ease;
-            border: 1px solid rgba(124, 58, 237, 0.1);
+            border: 1px solid rgba(1, 32, 96, 0.1);
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
             text-align: center;
             position: relative;
@@ -262,13 +262,13 @@ if (isset($_POST["addVenue"])) {
             left: 0;
             width: 100%;
             height: 4px;
-            background: linear-gradient(135deg, var(--primary-purple) 0%, var(--secondary-purple) 100%);
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
         }
 
         .room--card:hover {
             transform: translateY(-5px);
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-            border-color: var(--primary-purple);
+            border-color: var(--primary-blue);
         }
 
         .img--box--cover {
@@ -281,12 +281,12 @@ if (isset($_POST["addVenue"])) {
             border-radius: 12px;
             overflow: hidden;
             margin: 0 auto;
-            border: 3px solid rgba(124, 58, 237, 0.2);
+            border: 3px solid rgba(1, 32, 96, 0.2);
             transition: all 0.3s ease;
         }
 
         .room--card:hover .img--box {
-            border-color: var(--primary-purple);
+            border-color: var(--primary-blue);
             transform: scale(1.05);
         }
 
@@ -319,7 +319,7 @@ if (isset($_POST["addVenue"])) {
             padding: 2rem;
             margin-bottom: 2rem;
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(124, 58, 237, 0.1);
+            border: 1px solid rgba(1, 32, 96, 0.1);
         }
 
         .table-container .title {
@@ -328,7 +328,7 @@ if (isset($_POST["addVenue"])) {
             justify-content: space-between;
             margin-bottom: 1.5rem;
             padding-bottom: 1.5rem;
-            border-bottom: 2px solid rgba(124, 58, 237, 0.1);
+            border-bottom: 2px solid rgba(1, 32, 96, 0.1);
         }
 
         .table-container .section--title {
@@ -338,7 +338,7 @@ if (isset($_POST["addVenue"])) {
         .table {
             overflow-x: auto;
             border-radius: 15px;
-            border: 1px solid rgba(124, 58, 237, 0.1);
+            border: 1px solid rgba(1, 32, 96, 0.1);
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
         }
 
@@ -349,7 +349,7 @@ if (isset($_POST["addVenue"])) {
         }
 
         thead {
-            background: linear-gradient(135deg, var(--primary-purple) 0%, var(--secondary-purple) 100%);
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
         }
 
         th {
@@ -374,7 +374,7 @@ if (isset($_POST["addVenue"])) {
 
         td {
             padding: 1.25rem;
-            border-bottom: 1px solid rgba(124, 58, 237, 0.1);
+            border-bottom: 1px solid rgba(1, 32, 96, 0.1);
             font-size: 0.95rem;
             transition: all 0.2s ease;
         }
@@ -384,7 +384,7 @@ if (isset($_POST["addVenue"])) {
         }
 
         tbody tr:hover {
-            background: linear-gradient(135deg, rgba(124, 58, 237, 0.05) 0%, rgba(139, 92, 246, 0.05) 100%);
+            background: linear-gradient(135deg, rgba(1, 32, 96, 0.05) 0%, rgba(26, 74, 155, 0.05) 100%);
             transform: translateX(5px);
         }
 
@@ -441,12 +441,12 @@ if (isset($_POST["addVenue"])) {
             z-index: 1000;
             min-width: 450px;
             max-width: 90vw;
-            border: 1px solid rgba(124, 58, 237, 0.2);
+            border: 1px solid rgba(1, 32, 96, 0.2);
         }
 
         .form-title {
             padding: 1.5rem 2rem;
-            background: linear-gradient(135deg, var(--primary-purple) 0%, var(--secondary-purple) 100%);
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
             color: white;
             border-radius: 20px 20px 0 0;
             font-weight: 600;
@@ -470,15 +470,15 @@ if (isset($_POST["addVenue"])) {
         }
 
         .formDiv-venue input:focus, .formDiv-venue select:focus {
-            border-color: var(--primary-purple);
+            border-color: var(--primary-blue);
             outline: none;
-            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+            box-shadow: 0 0 0 3px rgba(1, 32, 96, 0.1);
             transform: translateY(-2px);
         }
 
         /* ENHANCED SUBMIT BUTTON - LIKE YOUR COURSE MANAGEMENT */
         .submit {
-            background: linear-gradient(135deg, var(--primary-purple) 0%, var(--secondary-purple) 100%);
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
             color: white;
             border: none;
             padding: 1rem 2rem;
@@ -488,7 +488,7 @@ if (isset($_POST["addVenue"])) {
             font-weight: 600;
             margin-top: 1rem;
             width: 100%;
-            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
+            box-shadow: 0 4px 15px rgba(1, 32, 96, 0.3);
             transition: all 0.3s ease;
             font-family: inherit;
             display: flex;
@@ -499,8 +499,8 @@ if (isset($_POST["addVenue"])) {
 
         .submit:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(124, 58, 237, 0.4);
-            background: linear-gradient(135deg, #6d28d9 0%, #4c1d95 100%);
+            box-shadow: 0 6px 20px rgba(1, 32, 96, 0.4);
+            background: linear-gradient(135deg, #001a4d 0%, #001133 100%);
         }
 
         .submit:active {
